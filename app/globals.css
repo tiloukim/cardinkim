@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+  background: #FAF9F6;
+  min-height: 100vh;
+}
+
+/* Animations */
+@keyframes fu {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes si {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes sd {
+  from { transform: translateY(-16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes su {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes spin {
+  from { transform: rotate(0); }
+  to { transform: rotate(360deg); }
+}
+
+/* Product card hover */
+.pc {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.pc:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 36px rgba(0,0,0,.1);
+}
+.pc:hover .pi {
+  transform: scale(1.03);
+}
+.pi {
+  transition: transform 0.5s;
+}
+.wb:hover {
+  background: rgba(255,255,255,1) !important;
+}
+
+/* Button hover effects */
+.bp:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(232,69,60,.3); }
+.bd:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.15); }
+.pp:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,48,135,.3); }
+.cp:hover { background: #1a1a1a !important; color: #fff !important; }
+.nl:hover { color: #E8453C !important; }
+.si:hover { transform: translateY(-2px); color: #E8453C !important; }
+.fl:hover { color: #fff !important; }
+.bp, .bd, .pp { transition: transform 0.2s, box-shadow 0.2s; }
+
+/* Input focus */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #E8453C !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .do { display: none !important; }
+  .ms { display: flex !important; }
+  .gp { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .hg { grid-template-columns: 1fr !important; }
+  .pg { grid-template-columns: 1fr !important; }
+  .fg { grid-template-columns: 1fr !important; text-align: center; }
 }
