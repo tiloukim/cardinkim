@@ -67,9 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase, fetchCustomer])
 
   const signOut = useCallback(async () => {
-    await supabase.auth.signOut()
     setUser(null)
     setCustomer(null)
+    try {
+      await Promise.race([
+        supabase.auth.signOut(),
+        new Promise(resolve => setTimeout(resolve, 2000)),
+      ])
+    } catch { /* ignore */ }
   }, [supabase])
 
   return (

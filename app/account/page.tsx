@@ -105,8 +105,7 @@ export default function AccountPage() {
 
   const handleSignOut = async () => {
     await signOut()
-    router.push('/')
-    router.refresh()
+    window.location.href = '/'
   }
 
   if (!ready) {
