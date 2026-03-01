@@ -23,17 +23,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const supabase = useMemo(() => createClient(), [])
   const initialized = useRef(false)
 
-  const fetchCustomer = useCallback(async (authId: string) => {
-    const { data } = await supabase
-      .from('ck_customers')
-      .select('*')
-      .eq('auth_id', authId)
-      .maybeSingle()
-    setCustomer(data ?? null)
-  }, [supabase])
+  const fetchCustomer = useCallback(async () => {
+    try {
+      const res = await fetch('/api/me')
+      if (res.ok) {
+        const data = await res.json()
+        setCustomer(data ?? null)
+      }
+    } catch { /* ignore */ }
+  }, [])
 
   const refreshCustomer = useCallback(async () => {
-    if (user) await fetchCustomer(user.id)
+    if (user) await fetchCustomer()
   }, [user, fetchCustomer])
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const u = session?.user ?? null
       setUser(u)
       if (u) {
-        await fetchCustomer(u.id)
+        await fetchCustomer()
       } else {
         setCustomer(null)
       }
