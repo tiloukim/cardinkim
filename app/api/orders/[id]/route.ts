@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { isAdmin } from '@/lib/admin'
 
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAdmin(req)) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  if (!await isAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -21,7 +21,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAdmin(req)) {
+  if (!await isAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

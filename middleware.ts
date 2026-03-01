@@ -28,8 +28,8 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const path = request.nextUrl.pathname
 
-  // Redirect unauthenticated users away from /account
-  if (path === '/account' && !user) {
+  // Redirect unauthenticated users away from /account and /admin
+  if ((path === '/account' || path.startsWith('/admin')) && !user) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 

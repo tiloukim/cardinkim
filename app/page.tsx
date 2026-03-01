@@ -6,11 +6,9 @@ import { useAuth } from '@/lib/auth-context'
 
 /* ═══════════════════════════════════════════════════
    CARDINKIM.COM — Teen Ecommerce
-   • Admin-only listing (password protected)
+   • Admin-only listing (Supabase auth)
    • PayPal checkout + Supabase DB
    ═══════════════════════════════════════════════════ */
-
-const ADMIN_PASSWORD = 'cardin2026'
 
 interface ProductColor {
   n: string
@@ -118,7 +116,10 @@ export default function Home() {
   const { user, customer } = useAuth()
   const [products, setProducts] = useState<Product[]>(INIT_PRODUCTS)
   const [view, setView] = useState('home')
-  const [cart, setCart] = useState<CartItem[]>([])
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === 'undefined') return []
+    try { const s = localStorage.getItem('ck_cart'); return s ? JSON.parse(s) : [] } catch { return [] }
+  })
   const [wish, setWish] = useState<Set<string>>(new Set())
   const [selProd, setSelProd] = useState<Product | null>(null)
   const [selColor, setSelColor] = useState(0)
@@ -134,12 +135,8 @@ export default function Home() {
   const [promoOn, setPromoOn] = useState(false)
   const [annBar, setAnnBar] = useState(true)
 
-  // Admin state
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [adminLoginOpen, setAdminLoginOpen] = useState(false)
-  const [adminPw, setAdminPw] = useState('')
-  const [adminError, setAdminError] = useState('')
-  const [adminMenuOpen, setAdminMenuOpen] = useState(false)
+  // Admin — derived from auth
+  const isAdmin = !!customer?.is_admin
 
   // Sell (admin only)
   const [sellOpen, setSellOpen] = useState(false)
@@ -153,6 +150,11 @@ export default function Home() {
   const [checkForm, setCheckForm] = useState({ name: '', email: '', address: '', city: '', state: '', zip: '' })
   const [paypalProcessing, setPaypalProcessing] = useState(false)
   const [lastOrderId, setLastOrderId] = useState<string | null>(null)
+
+  // Persist cart to localStorage
+  useEffect(() => {
+    try { localStorage.setItem('ck_cart', JSON.stringify(cart)) } catch { /* ignore */ }
+  }, [cart])
 
   // Fetch products from DB on mount
   const fetchProducts = useCallback(async () => {
@@ -208,11 +210,6 @@ export default function Home() {
   const goShop = (c?: string, co?: string) => { setView('shop'); if (c) setCat(c); if (co) setCol(co); window.scrollTo(0, 0) }
   const filt = products.filter(p => (cat === 'all' || p.cat === cat) && (col === 'all' || p.col === col) && (!search || p.title.toLowerCase().includes(search.toLowerCase())))
 
-  // Admin login
-  const handleAdminLogin = () => {
-    if (adminPw === ADMIN_PASSWORD) { setIsAdmin(true); setAdminLoginOpen(false); setAdminPw(''); setAdminError(''); notify('Admin mode activated!') }
-    else { setAdminError('Wrong password') }
-  }
 
   // Sell images
   const handleSellImg = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -231,7 +228,7 @@ export default function Home() {
     try {
       const res = await fetch('/api/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_PASSWORD },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: sellForm.title,
           price: parseFloat(sellForm.price),
@@ -363,15 +360,6 @@ export default function Home() {
             <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.TikTok /></a>
             <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.YouTube /></a>
             <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.dark, textDecoration: 'none', fontSize: 12, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
-            <div style={{ position: 'relative' }}>
-              <button onClick={() => { if (isAdmin) { setAdminMenuOpen(!adminMenuOpen) } else setAdminLoginOpen(true) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: isAdmin ? C.accent : '#ccc', display: 'flex' }} title={isAdmin ? 'Admin Menu' : 'Admin Login'}>
-                <IC.Gear />
-              </button>
-              {isAdmin && adminMenuOpen && <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 8, background: '#fff', borderRadius: 12, boxShadow: '0 8px 30px rgba(0,0,0,.15)', overflow: 'hidden', minWidth: 180, zIndex: 200, animation: 'sd .2s ease' }}>
-                <button onClick={() => { setSellOpen(true); setSellStep(1); setAdminMenuOpen(false) }} style={{ display: 'block', width: '100%', padding: '12px 18px', background: 'none', border: 'none', borderBottom: '1px solid #f0f0f0', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', fontFamily: F.body }}>Add Product</button>
-                <a href="/admin" style={{ display: 'block', padding: '12px 18px', fontSize: 13, fontWeight: 600, color: C.accent, textDecoration: 'none', fontFamily: F.body }}>Admin Dashboard</a>
-              </div>}
-            </div>
             <div onClick={() => setCartOpen(true)}><IC.Cart n={cartN} /></div>
           </div>
         </div>
@@ -389,24 +377,6 @@ export default function Home() {
         </div>
       </div>}
 
-      {/* ADMIN LOGIN MODAL */}
-      {adminLoginOpen && <div style={{ position: 'fixed', inset: 0, zIndex: 500 }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.45)', backdropFilter: 'blur(4px)' }} onClick={() => { setAdminLoginOpen(false); setAdminPw(''); setAdminError('') }} />
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 'min(380px,90vw)', background: '#fff', borderRadius: 24, padding: 32, animation: 'su .3s ease', textAlign: 'center' }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#FFF0EF', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: C.accent }}><IC.Lock /></div>
-          <h2 style={{ fontFamily: F.head, fontSize: 22, fontWeight: 800, marginBottom: 6 }}>Admin Login</h2>
-          <p style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>Enter your password to manage listings</p>
-          <input
-            type="password" placeholder="Password" value={adminPw}
-            onChange={e => { setAdminPw(e.target.value); setAdminError('') }}
-            onKeyDown={e => { if (e.key === 'Enter') handleAdminLogin() }}
-            style={{ width: '100%', padding: '14px 18px', border: `2px solid ${adminError ? '#E8453C' : '#eee'}`, borderRadius: 14, fontSize: 15, fontFamily: F.body, marginBottom: 8, boxSizing: 'border-box', textAlign: 'center' }}
-          />
-          {adminError && <div style={{ fontSize: 12, color: C.accent, fontWeight: 600, marginBottom: 8 }}>{adminError}</div>}
-          <button onClick={handleAdminLogin} className="bp" style={btn(C.accent, '#fff', { width: '100%', marginTop: 8, fontSize: 15 })}>Login</button>
-          <button onClick={() => { setAdminLoginOpen(false); setAdminPw(''); setAdminError('') }} style={{ marginTop: 12, background: 'none', border: 'none', color: '#999', fontSize: 13, cursor: 'pointer', fontFamily: F.body }}>Cancel</button>
-        </div>
-      </div>}
 
       {/* ADMIN SELL MODAL (3-step) */}
       {sellOpen && isAdmin && <div style={{ position: 'fixed', inset: 0, zIndex: 500 }}>
@@ -529,7 +499,7 @@ export default function Home() {
         <section style={{ background: 'linear-gradient(170deg,#FFF5F3 0%,#FAF9F6 40%,#F3F0FF 80%,#FFF5F3 100%)', padding: '55px 24px 65px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: 'rgba(232,69,60,.06)', filter: 'blur(60px)' }} />
           <div style={{ maxWidth: 1280, margin: '0 auto', animation: 'fu .6s ease' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.dark, color: '#fff', padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', marginBottom: 18 }}><IC.TikTok /> 150K+ FOLLOWERS</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.dark, color: '#fff', padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', marginBottom: 18 }}><IC.TikTok /> 101K+ FOLLOWERS</div>
             <h1 style={{ fontFamily: F.head, fontSize: 'clamp(36px,5.5vw,60px)', fontWeight: 900, lineHeight: 1.05, color: C.dark, marginBottom: 18 }}>Teen Fashion<br />That&apos;s <span style={{ color: C.accent, fontStyle: 'italic' }}>Actually</span><br />Affordable</h1>
             <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -581,7 +551,12 @@ export default function Home() {
         <div style={{ background: '#fff', borderRadius: 18, padding: 24, marginBottom: 20, border: '1px solid #eee' }}>
           <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16 }}>Shipping Info</h3>
           {[{ k: 'name', l: 'Full Name', ph: 'Jane Doe' }, { k: 'email', l: 'Email', ph: 'jane@email.com' }, { k: 'address', l: 'Address', ph: '123 Main St' }].map(f => <div key={f.k} style={{ marginBottom: 14 }}><label style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#999', display: 'block', marginBottom: 5 }}>{f.l} *</label><input value={checkForm[f.k as keyof typeof checkForm]} onChange={e => setCheckForm({ ...checkForm, [f.k]: e.target.value })} placeholder={f.ph} style={{ width: '100%', padding: '12px 14px', border: '2px solid #eee', borderRadius: 11, fontSize: 14, fontFamily: F.body, boxSizing: 'border-box' }} /></div>)}
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 10 }}>{[{ k: 'city', l: 'City' }, { k: 'state', l: 'State' }, { k: 'zip', l: 'Zip' }].map(f => <div key={f.k}><label style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#999', display: 'block', marginBottom: 5 }}>{f.l}</label><input value={checkForm[f.k as keyof typeof checkForm]} onChange={e => setCheckForm({ ...checkForm, [f.k]: e.target.value })} style={{ width: '100%', padding: '12px 14px', border: '2px solid #eee', borderRadius: 11, fontSize: 14, fontFamily: F.body, boxSizing: 'border-box' }} /></div>)}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 10 }}>
+            <div><label style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#999', display: 'block', marginBottom: 5 }}>City</label><input value={checkForm.city} onChange={e => setCheckForm({ ...checkForm, city: e.target.value })} style={{ width: '100%', padding: '12px 14px', border: '2px solid #eee', borderRadius: 11, fontSize: 14, fontFamily: F.body, boxSizing: 'border-box' }} /></div>
+            <div><label style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#999', display: 'block', marginBottom: 5 }}>State</label><select value={checkForm.state} onChange={e => setCheckForm({ ...checkForm, state: e.target.value })} style={{ width: '100%', padding: '12px 10px', border: '2px solid #eee', borderRadius: 11, fontSize: 14, fontFamily: F.body, boxSizing: 'border-box', background: '#fff' }}><option value="">--</option>{['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC'].map(s => <option key={s} value={s}>{s}</option>)}</select></div>
+            <div><label style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#999', display: 'block', marginBottom: 5 }}>Zip</label><input value={checkForm.zip} onChange={e => setCheckForm({ ...checkForm, zip: e.target.value })} style={{ width: '100%', padding: '12px 14px', border: '2px solid #eee', borderRadius: 11, fontSize: 14, fontFamily: F.body, boxSizing: 'border-box' }} /></div>
+          </div>
+          <div style={{ marginTop: 12, fontSize: 11, color: '#999', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>&#127482;&#127480; US shipping only</div>
         </div>
 
         {/* Order Summary */}

@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-
-const ADMIN_TOKEN = 'cardin2026'
+import { usePathname, useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth-context'
 
 interface Notification {
   id: string
@@ -17,74 +16,61 @@ interface Notification {
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [authed, setAuthed] = useState(false)
-  const [pw, setPw] = useState('')
-  const [error, setError] = useState('')
+  const { user, customer, loading, signOut } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [notifOpen, setNotifOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem('ck_admin') === 'true') {
-      setAuthed(true)
-    }
-  }, [])
+  const isAdmin = !!customer?.is_admin
 
   const fetchNotifs = useCallback(async () => {
     try {
-      const res = await fetch('/api/notifications?unread=true', {
-        headers: { 'x-admin-token': ADMIN_TOKEN },
-      })
+      const res = await fetch('/api/notifications?unread=true')
       if (res.ok) setNotifications(await res.json())
     } catch { /* ignore */ }
   }, [])
 
   useEffect(() => {
-    if (!authed) return
+    if (!isAdmin) return
     fetchNotifs()
     const interval = setInterval(fetchNotifs, 30000)
     return () => clearInterval(interval)
-  }, [authed, fetchNotifs])
+  }, [isAdmin, fetchNotifs])
 
   const markRead = async () => {
     if (notifications.length === 0) return
     const ids = notifications.map(n => n.id)
     await fetch('/api/notifications', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ids }),
     })
     setNotifications([])
     setNotifOpen(false)
   }
 
-  const handleLogin = () => {
-    if (pw === ADMIN_TOKEN) {
-      setAuthed(true)
-      sessionStorage.setItem('ck_admin', 'true')
-      setPw('')
-      setError('')
-    } else {
-      setError('Wrong password')
-    }
+  if (loading) {
+    return (
+      <div className="admin-login-gate">
+        <div className="admin-login-card">
+          <div className="admin-login-icon">&#9203;</div>
+          <h1>Loading...</h1>
+        </div>
+      </div>
+    )
   }
 
-  if (!authed) {
+  if (!user || !isAdmin) {
     return (
       <div className="admin-login-gate">
         <div className="admin-login-card">
           <div className="admin-login-icon">&#128274;</div>
-          <h1>Admin Access</h1>
-          <p>Enter your password to access the CRM dashboard</p>
-          <input
-            type="password"
-            placeholder="Password"
-            value={pw}
-            onChange={e => { setPw(e.target.value); setError('') }}
-            onKeyDown={e => { if (e.key === 'Enter') handleLogin() }}
-          />
-          {error && <div className="admin-login-error">{error}</div>}
-          <button onClick={handleLogin}>Login</button>
+          <h1>Access Denied</h1>
+          <p>{!user ? 'Please log in to access the admin dashboard.' : 'Your account does not have admin access.'}</p>
+          <button onClick={() => router.push(user ? '/' : '/login')}>
+            {user ? 'Back to Store' : 'Go to Login'}
+          </button>
         </div>
       </div>
     )
@@ -120,7 +106,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/" className="admin-nav-item">
             <span>&#127968;</span> Back to Store
           </Link>
-          <button onClick={() => { sessionStorage.removeItem('ck_admin'); setAuthed(false) }} className="admin-logout-btn">
+          <button onClick={async () => { await signOut(); router.push('/login') }} className="admin-logout-btn">
             Logout
           </button>
         </div>

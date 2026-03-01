@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-const TOKEN = 'cardin2026'
-
 interface Stats {
   totalRevenue: number
   todayRevenue: number
@@ -30,7 +28,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/stats', { headers: { 'x-admin-token': TOKEN } })
+    fetch('/api/stats')
       .then(r => r.json())
       .then(setStats)
       .catch(() => {})

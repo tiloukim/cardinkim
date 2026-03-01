@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 
-const TOKEN = 'cardin2026'
-
 const CARRIERS = [
   { value: 'usps', label: 'USPS' },
   { value: 'ups', label: 'UPS' },
@@ -62,7 +60,7 @@ export default function AdminOrderDetail() {
   const [shipTracking, setShipTracking] = useState('')
 
   useEffect(() => {
-    fetch(`/api/orders/${params.id}`, { headers: { 'x-admin-token': TOKEN } })
+    fetch(`/api/orders/${params.id}`)
       .then(r => r.json())
       .then(setOrder)
       .catch(() => {})
@@ -74,7 +72,7 @@ export default function AdminOrderDetail() {
     try {
       const res = await fetch(`/api/orders/${params.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'x-admin-token': TOKEN },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus, ...extra }),
       })
       if (res.ok) {

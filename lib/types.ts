@@ -40,7 +40,9 @@ export interface Customer {
   city: string | null
   state: string | null
   zip: string | null
+  phone: string | null
   auth_id: string | null
+  is_admin: boolean
   created_at: string
 }
 

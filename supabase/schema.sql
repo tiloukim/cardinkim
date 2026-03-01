@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS ck_customers (
   city TEXT,
   state TEXT,
   zip TEXT,
+  phone TEXT,
   auth_id UUID UNIQUE,
+  is_admin BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

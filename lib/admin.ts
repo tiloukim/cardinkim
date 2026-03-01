@@ -1,6 +1,21 @@
-const ADMIN_TOKEN = 'cardin2026'
+import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 
-export function isAdmin(req: Request): boolean {
-  const token = req.headers.get('x-admin-token')
-  return token === ADMIN_TOKEN
+export async function isAdmin(): Promise<boolean> {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return false
+
+    const svc = createServiceClient()
+    const { data } = await svc
+      .from('ck_customers')
+      .select('is_admin')
+      .eq('auth_id', user.id)
+      .maybeSingle()
+
+    return data?.is_admin === true
+  } catch {
+    return false
+  }
 }

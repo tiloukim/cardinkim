@@ -3,8 +3,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 
-const TOKEN = 'cardin2026'
-
 interface Order {
   id: string
   total: number
@@ -27,9 +25,7 @@ export default function AdminOrders() {
   const fetchOrders = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/orders?status=${filter}`, {
-        headers: { 'x-admin-token': TOKEN },
-      })
+      const res = await fetch(`/api/orders?status=${filter}`)
       if (res.ok) setOrders(await res.json())
     } catch { /* ignore */ }
     setLoading(false)

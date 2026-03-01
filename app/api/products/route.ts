@@ -23,7 +23,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  if (!isAdmin(req)) {
+  if (!await isAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

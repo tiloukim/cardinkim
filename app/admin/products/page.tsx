@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-const TOKEN = 'cardin2026'
-
 interface Product {
   id: string
   title: string
@@ -40,7 +38,7 @@ export default function AdminProducts() {
     try {
       const res = await fetch(`/api/products/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'x-admin-token': TOKEN },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
       })
       if (res.ok) {
@@ -55,7 +53,6 @@ export default function AdminProducts() {
     try {
       await fetch(`/api/products/${id}`, {
         method: 'DELETE',
-        headers: { 'x-admin-token': TOKEN },
       })
       fetchProducts()
     } catch { /* ignore */ }
