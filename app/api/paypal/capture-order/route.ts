@@ -17,22 +17,43 @@ export async function POST(req: Request) {
 
     const supabase = createServiceClient()
 
-    // Upsert customer
-    const { data: customer } = await supabase
+    // Find or create customer (preserves auth_id for logged-in users)
+    let customer: { id: string } | null = null
+    const { data: existing } = await supabase
       .from('ck_customers')
-      .upsert(
-        {
+      .select('id')
+      .eq('email', shipping.email)
+      .single()
+
+    if (existing) {
+      // Update shipping info on existing customer
+      await supabase
+        .from('ck_customers')
+        .update({
+          name: shipping.name,
+          address: shipping.address,
+          city: shipping.city,
+          state: shipping.state,
+          zip: shipping.zip,
+        })
+        .eq('id', existing.id)
+      customer = existing
+    } else {
+      // Create new guest customer
+      const { data: newCust } = await supabase
+        .from('ck_customers')
+        .insert({
           email: shipping.email,
           name: shipping.name,
           address: shipping.address,
           city: shipping.city,
           state: shipping.state,
           zip: shipping.zip,
-        },
-        { onConflict: 'email' }
-      )
-      .select()
-      .single()
+        })
+        .select('id')
+        .single()
+      customer = newCust
+    }
 
     // Create order
     const { data: order, error: orderErr } = await supabase
