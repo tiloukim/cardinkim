@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, useRef, type ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User, SupabaseClient } from '@supabase/supabase-js'
 import type { Customer } from '@/lib/types'
@@ -20,20 +20,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [customer, setCustomer] = useState<Customer | null>(null)
   const [loading, setLoading] = useState(true)
-  // Stable client reference — never recreated
   const supabase = useMemo(() => createClient(), [])
+  const initialized = useRef(false)
 
   const fetchCustomer = useCallback(async (authId: string) => {
-    try {
-      const { data } = await supabase
-        .from('ck_customers')
-        .select('*')
-        .eq('auth_id', authId)
-        .single()
-      setCustomer(data)
-    } catch {
-      setCustomer(null)
-    }
+    const { data } = await supabase
+      .from('ck_customers')
+      .select('*')
+      .eq('auth_id', authId)
+      .maybeSingle()
+    setCustomer(data ?? null)
   }, [supabase])
 
   const refreshCustomer = useCallback(async () => {
@@ -41,27 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, fetchCustomer])
 
   useEffect(() => {
-    let mounted = true
-
-    const init = async () => {
-      try {
-        // Use getSession() for fast local check (no network request)
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!mounted) return
-        const u = session?.user ?? null
-        setUser(u)
-        if (u) await fetchCustomer(u.id)
-      } catch {
-        if (!mounted) return
-        setUser(null)
-        setCustomer(null)
-      }
-      if (mounted) setLoading(false)
-    }
-    init()
-
+    // onAuthStateChange fires INITIAL_SESSION immediately — no separate init needed
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!mounted) return
       const u = session?.user ?? null
       setUser(u)
       if (u) {
@@ -69,12 +46,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setCustomer(null)
       }
-      setLoading(false)
+      if (!initialized.current) {
+        initialized.current = true
+        setLoading(false)
+      }
     })
 
+    // Safety timeout — never stay loading forever
+    const timeout = setTimeout(() => {
+      if (!initialized.current) {
+        initialized.current = true
+        setLoading(false)
+      }
+    }, 3000)
+
     return () => {
-      mounted = false
       subscription.unsubscribe()
+      clearTimeout(timeout)
     }
   }, [supabase, fetchCustomer])
 
