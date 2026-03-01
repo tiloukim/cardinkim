@@ -344,8 +344,8 @@ export default function Home() {
           </nav>
           <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
             <button onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.dark }}><IC.Search /></button>
-            <a href="https://tiktok.com/@cardinkim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.TikTok /></a>
-            <a href="https://youtube.com/@cardinkim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.YouTube /></a>
+            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.TikTok /></a>
+            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.YouTube /></a>
             <div style={{ position: 'relative' }}>
               <button onClick={() => { if (isAdmin) { setAdminMenuOpen(!adminMenuOpen) } else setAdminLoginOpen(true) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: isAdmin ? C.accent : '#ccc', display: 'flex' }} title={isAdmin ? 'Admin Menu' : 'Admin Login'}>
                 <IC.Gear />
@@ -366,8 +366,8 @@ export default function Home() {
         <button onClick={() => setMobMenu(false)} style={{ position: 'absolute', top: 18, right: 18, background: '#f0f0f0', border: 'none', borderRadius: '50%', width: 40, height: 40, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IC.X /></button>
         {['Shop All', 'New In', 'Trending'].map(l => <span key={l} onClick={() => { goShop('all', l === 'Shop All' ? 'all' : l === 'New In' ? 'new' : 'trend'); setMobMenu(false) }} style={{ fontSize: 22, fontWeight: 700, color: C.dark, cursor: 'pointer' }}>{l}</span>)}
         <div style={{ display: 'flex', gap: 18, marginTop: 12 }}>
-          <a href="https://tiktok.com/@cardinkim" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.TikTok /></a>
-          <a href="https://youtube.com/@cardinkim" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.YouTube /></a>
+          <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.TikTok /></a>
+          <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.YouTube /></a>
           <a href="https://instagram.com/cardinkim" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.Insta /></a>
         </div>
       </div>}
@@ -523,7 +523,7 @@ export default function Home() {
         </section>
         <section style={{ background: '#fff', borderBottom: '1px solid #eee' }}><div className="pg" style={{ maxWidth: 1280, margin: '0 auto', padding: '24px', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18 }}>{[{ i: <IC.Truck />, t: 'Free Shipping $50+', s: 'Fast delivery' }, { i: <IC.Shield />, t: 'Buyer Protection', s: 'Authentic guaranteed' }, { i: <IC.Refresh />, t: 'Easy Returns', s: '14-day returns' }].map(({ i, t, s }) => <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div style={{ color: C.accent }}>{i}</div><div><div style={{ fontSize: 12, fontWeight: 700 }}>{t}</div><div style={{ fontSize: 11, color: '#999' }}>{s}</div></div></div>)}</div></section>
         <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}><div><h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900 }}>Trending Now</h2></div><button onClick={() => goShop('all', 'trend')} style={{ fontSize: 12, fontWeight: 700, color: C.accent, background: 'none', border: 'none', cursor: 'pointer' }}>View All &rarr;</button></div><div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{products.filter(p => p.col === 'trend' || p.col === 'best').slice(0, 4).map((p, i) => <Card key={p.id} p={p} i={i} />)}</div></section>
-        <section style={{ background: C.dark, color: '#fff', padding: '45px 24px', textAlign: 'center' }}><div style={{ maxWidth: 550, margin: '0 auto' }}><div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 18 }}><a href="https://tiktok.com/@cardinkim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a><a href="https://youtube.com/@cardinkim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FF0000', color: '#fff', padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a></div><h3 style={{ fontFamily: F.head, fontSize: 26, fontWeight: 900, marginBottom: 10 }}>As Seen on My Socials</h3><p style={{ fontSize: 14, color: '#aaa', lineHeight: 1.7 }}>Every item is something I&apos;d wear myself. Follow for styling tips, hauls, and outfit inspo!</p></div></section>
+        <section style={{ background: C.dark, color: '#fff', padding: '45px 24px', textAlign: 'center' }}><div style={{ maxWidth: 550, margin: '0 auto' }}><div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 18 }}><a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a><a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FF0000', color: '#fff', padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a></div><h3 style={{ fontFamily: F.head, fontSize: 26, fontWeight: 900, marginBottom: 10 }}>As Seen on My Socials</h3><p style={{ fontSize: 14, color: '#aaa', lineHeight: 1.7 }}>Every item is something I&apos;d wear myself. Follow for styling tips, hauls, and outfit inspo!</p></div></section>
         <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px 55px' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}><h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900 }}>Just Dropped</h2><button onClick={() => goShop('all', 'new')} style={{ fontSize: 12, fontWeight: 700, color: C.accent, background: 'none', border: 'none', cursor: 'pointer' }}>View All &rarr;</button></div><div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{products.filter(p => p.col === 'new').slice(0, 4).map((p, i) => <Card key={p.id} p={p} i={i} />)}</div></section>
       </>}
 
@@ -614,8 +614,8 @@ export default function Home() {
         </div>}
         <p style={{ fontSize: 14, color: '#888', marginBottom: 28 }}>Your PayPal receipt is your confirmation. Follow me for styling tips with your new pieces!</p>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 28 }}>
-          <a href="https://tiktok.com/@cardinkim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: C.dark, color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
-          <a href="https://youtube.com/@cardinkim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#FF0000', color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
+          <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: C.dark, color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
+          <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#FF0000', color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
         </div>
         <button onClick={() => setView('home')} className="bp" style={btn(C.accent, '#fff', { fontSize: 15 })}>Continue Shopping</button>
       </section>}
@@ -633,8 +633,8 @@ export default function Home() {
             <div style={{ fontFamily: F.head, fontSize: 24, fontWeight: 900, marginBottom: 12 }}>cardin<span style={{ color: C.accent }}>kim</span></div>
             <p style={{ fontSize: 13, color: '#888', lineHeight: 1.7, maxWidth: 280 }}>Teen fashion that&apos;s affordable, sustainable, and curated by someone who gets your style.</p>
             <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>
-              <a href="https://tiktok.com/@cardinkim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.TikTok /></a>
-              <a href="https://youtube.com/@cardinkim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.YouTube /></a>
+              <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.TikTok /></a>
+              <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.YouTube /></a>
               <a href="https://instagram.com/cardinkim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.Insta /></a>
             </div>
           </div>
@@ -649,8 +649,8 @@ export default function Home() {
           </div>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Follow</div>
-            <a href="https://tiktok.com/@cardinkim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>TikTok</a>
-            <a href="https://youtube.com/@cardinkim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>YouTube</a>
+            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>TikTok</a>
+            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>YouTube</a>
             <a href="https://instagram.com/cardinkim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>Instagram</a>
           </div>
         </div>
