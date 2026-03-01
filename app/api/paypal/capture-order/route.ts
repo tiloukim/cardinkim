@@ -5,11 +5,14 @@ import { createServiceClient } from '@/lib/supabase/server'
 export async function POST(req: Request) {
   try {
     const { paypalOrderId, cart, shipping, promo, totals } = await req.json()
+    console.log('[capture] Start:', { paypalOrderId, email: shipping?.email, cartLen: cart?.length, total: totals?.total })
 
     // Capture payment with PayPal
     const capture = await capturePayPalOrder(paypalOrderId)
+    console.log('[capture] PayPal response:', JSON.stringify(capture).slice(0, 500))
 
     if (capture.status !== 'COMPLETED') {
+      console.log('[capture] PayPal status not COMPLETED:', capture.status)
       return NextResponse.json({ error: 'Payment not completed' }, { status: 400 })
     }
 
@@ -19,11 +22,12 @@ export async function POST(req: Request) {
 
     // Find or create customer (preserves auth_id for logged-in users)
     let customer: { id: string } | null = null
-    const { data: existing } = await supabase
+    const { data: existing, error: findErr } = await supabase
       .from('ck_customers')
       .select('id')
       .eq('email', shipping.email)
       .single()
+    console.log('[capture] Customer lookup:', { existing, findErr: findErr?.message })
 
     if (existing) {
       // Update shipping info on existing customer
@@ -40,7 +44,7 @@ export async function POST(req: Request) {
       customer = existing
     } else {
       // Create new guest customer
-      const { data: newCust } = await supabase
+      const { data: newCust, error: createErr } = await supabase
         .from('ck_customers')
         .insert({
           email: shipping.email,
@@ -52,6 +56,7 @@ export async function POST(req: Request) {
         })
         .select('id')
         .single()
+      console.log('[capture] Customer create:', { newCust, createErr: createErr?.message })
       customer = newCust
     }
 
@@ -78,6 +83,7 @@ export async function POST(req: Request) {
       .select()
       .single()
 
+    console.log('[capture] Order insert:', { orderId: order?.id, orderErr: orderErr?.message })
     if (orderErr || !order) {
       console.error('Order create error:', orderErr)
       return NextResponse.json({ error: 'Failed to save order' }, { status: 500 })
@@ -115,9 +121,10 @@ export async function POST(req: Request) {
       order_id: order.id,
     })
 
+    console.log('[capture] Success! orderId:', order.id)
     return NextResponse.json({ success: true, orderId: order.id })
   } catch (err) {
-    console.error('PayPal capture error:', err)
+    console.error('[capture] Unhandled error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
