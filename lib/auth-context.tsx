@@ -2,24 +2,19 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, useMemo, type ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { User } from '@supabase/supabase-js'
+import type { User, SupabaseClient } from '@supabase/supabase-js'
 import type { Customer } from '@/lib/types'
 
 interface AuthContextType {
   user: User | null
   customer: Customer | null
   loading: boolean
+  supabase: SupabaseClient
   signOut: () => Promise<void>
   refreshCustomer: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  customer: null,
-  loading: true,
-  signOut: async () => {},
-  refreshCustomer: async () => {},
-})
+const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -80,10 +75,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase])
 
   return (
-    <AuthContext.Provider value={{ user, customer, loading, signOut, refreshCustomer }}>
+    <AuthContext.Provider value={{ user, customer, loading, supabase, signOut, refreshCustomer }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-export const useAuth = () => useContext(AuthContext)
+export function useAuth() {
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
+  return ctx
+}

@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { createClient } from '@/lib/supabase/client'
 
 interface OrderWithItems {
   id: string
@@ -42,9 +41,8 @@ const CARRIER_URLS: Record<string, string> = {
 const CARRIER_LABELS: Record<string, string> = { usps: 'USPS', ups: 'UPS', fedex: 'FedEx', dhl: 'DHL' }
 
 export default function AccountPage() {
-  const { user, customer, loading, signOut, refreshCustomer } = useAuth()
+  const { user, customer, loading, signOut, refreshCustomer, supabase } = useAuth()
   const router = useRouter()
-  const supabase = useMemo(() => createClient(), [])
 
   const [orders, setOrders] = useState<OrderWithItems[]>([])
   const [loadingOrders, setLoadingOrders] = useState(true)
