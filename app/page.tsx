@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 
 /* ═══════════════════════════════════════════════════
    CARDINKIM.COM — Teen Ecommerce
    • Admin-only listing (password protected)
-   • PayPal checkout
+   • PayPal checkout + Supabase DB
    ═══════════════════════════════════════════════════ */
 
 const ADMIN_PASSWORD = 'cardin2026'
@@ -16,7 +17,7 @@ interface ProductColor {
 }
 
 interface Product {
-  id: number
+  id: string
   title: string
   price: number
   compare: number | null
@@ -33,7 +34,7 @@ interface Product {
 
 interface CartItem {
   key: string
-  id: number
+  id: string
   title: string
   price: number
   color: string
@@ -43,19 +44,39 @@ interface CartItem {
 }
 
 const INIT_PRODUCTS: Product[] = [
-  { id: 1, title: 'Butterfly Mesh Top', price: 24.99, compare: 39.99, cat: 'tops', col: 'new', colors: [{ n: 'Lilac', h: '#C8A2C8' }, { n: 'Pink', h: '#F4C2C2' }, { n: 'Black', h: '#1a1a1a' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=600&h=750&fit=crop', desc: 'Dreamy butterfly mesh overlay. Layer over a cami for the perfect going-out look.', cond: 'New', badge: 'NEW', stock: 12 },
-  { id: 2, title: 'Vintage Wide Leg Jeans', price: 48.99, compare: 72, cat: 'bottoms', col: 'best', colors: [{ n: 'Light Wash', h: '#A4C8E1' }, { n: 'Dark Indigo', h: '#2C3E6B' }], sizes: ['24', '25', '26', '27', '28', '29', '30'], img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&h=750&fit=crop', desc: 'High-waisted wide leg jeans with authentic vintage-inspired wash. Everyone\'s obsessed.', cond: 'Like New', badge: 'BEST', stock: 8 },
-  { id: 3, title: 'Oversized Linen Blazer', price: 59.99, compare: 89.99, cat: 'outerwear', col: 'new', colors: [{ n: 'Oat', h: '#D4C5A9' }, { n: 'Charcoal', h: '#444' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=750&fit=crop', desc: 'Effortlessly cool oversized blazer. Throw it over anything for instant cool-girl energy.', cond: 'New', badge: 'NEW', stock: 15 },
-  { id: 4, title: 'Platform Canvas Sneakers', price: 54.99, compare: null, cat: 'shoes', col: 'best', colors: [{ n: 'White', h: '#fff' }, { n: 'Black', h: '#1a1a1a' }, { n: 'Sage', h: '#9CAF88' }], sizes: ['6', '6.5', '7', '7.5', '8', '8.5', '9'], img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&h=750&fit=crop', desc: 'Chunky platform sneakers. The 3-inch lift you didn\'t know you needed.', cond: 'New with Tags', badge: null, stock: 22 },
-  { id: 5, title: 'Coquette Bow Mini Skirt', price: 32.99, compare: 45, cat: 'bottoms', col: 'trend', colors: [{ n: 'Ballet Pink', h: '#E8B4B8' }, { n: 'Cream', h: '#FFFDD0' }, { n: 'Black', h: '#1a1a1a' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=750&fit=crop', desc: 'Cutest bow-detail mini with a flirty A-line shape. Coquette era essentials.', cond: 'New', badge: 'TREND', stock: 6 },
-  { id: 6, title: 'Chunky Gold Hoops', price: 18.99, compare: null, cat: 'accessories', col: 'best', colors: [{ n: 'Gold', h: '#D4AF37' }, { n: 'Silver', h: '#C0C0C0' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&h=750&fit=crop', desc: 'Everyday chunky hoops. Hypoallergenic, lightweight, essential.', cond: 'New', badge: null, stock: 45 },
-  { id: 7, title: 'Retro Track Jacket', price: 44.99, compare: 65, cat: 'outerwear', col: 'new', colors: [{ n: 'Red', h: '#CC3333' }, { n: 'Navy', h: '#1B2A4A' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=750&fit=crop', desc: 'Vintage-inspired track jacket with contrast stripes. Y2K throwback.', cond: 'New', badge: 'NEW', stock: 18 },
-  { id: 8, title: 'Floral Wrap Midi Dress', price: 42.99, compare: 64, cat: 'dresses', col: 'trend', colors: [{ n: 'Garden', h: '#E8C4D8' }, { n: 'Blue', h: '#7BA7BC' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&h=750&fit=crop', desc: 'Flowy wrap midi with the prettiest floral print. Perfect for brunch or date night.', cond: 'New', badge: 'TREND', stock: 10 },
-  { id: 9, title: 'Ribbed Crop Tank 3-Pack', price: 28.99, compare: 45, cat: 'tops', col: 'best', colors: [{ n: 'Basics', h: '#555' }, { n: 'Pastels', h: '#DEB5D3' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&h=750&fit=crop', desc: 'Your everyday staple. Three ribbed crop tanks in one pack.', cond: 'New', badge: 'VALUE', stock: 30 },
-  { id: 10, title: 'Baggy Cargo Pants', price: 46.99, compare: 68, cat: 'bottoms', col: 'new', colors: [{ n: 'Khaki', h: '#C3B091' }, { n: 'Black', h: '#1a1a1a' }, { n: 'Olive', h: '#708238' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=750&fit=crop', desc: 'Low-rise baggy cargo with oversized pockets. Streetwear staple.', cond: 'New', badge: 'NEW', stock: 20 },
-  { id: 11, title: 'Beaded Phone Charm', price: 12.99, compare: null, cat: 'accessories', col: 'trend', colors: [{ n: 'Rainbow', h: '#E8B4B8' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&h=750&fit=crop', desc: 'Adorable beaded phone charm. As seen in my TikTok hauls!', cond: 'New', badge: 'TIKTOK', stock: 50 },
-  { id: 12, title: 'Satin Hair Bow Set', price: 14.99, compare: null, cat: 'accessories', col: 'trend', colors: [{ n: 'Assorted', h: '#E8C4D8' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=750&fit=crop', desc: 'Set of 4 oversized satin hair bows in dreamy colors.', cond: 'New', badge: null, stock: 35 },
+  { id: '1', title: 'Butterfly Mesh Top', price: 24.99, compare: 39.99, cat: 'tops', col: 'new', colors: [{ n: 'Lilac', h: '#C8A2C8' }, { n: 'Pink', h: '#F4C2C2' }, { n: 'Black', h: '#1a1a1a' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=600&h=750&fit=crop', desc: 'Dreamy butterfly mesh overlay. Layer over a cami for the perfect going-out look.', cond: 'New', badge: 'NEW', stock: 12 },
+  { id: '2', title: 'Vintage Wide Leg Jeans', price: 48.99, compare: 72, cat: 'bottoms', col: 'best', colors: [{ n: 'Light Wash', h: '#A4C8E1' }, { n: 'Dark Indigo', h: '#2C3E6B' }], sizes: ['24', '25', '26', '27', '28', '29', '30'], img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&h=750&fit=crop', desc: 'High-waisted wide leg jeans with authentic vintage-inspired wash. Everyone\'s obsessed.', cond: 'Like New', badge: 'BEST', stock: 8 },
+  { id: '3', title: 'Oversized Linen Blazer', price: 59.99, compare: 89.99, cat: 'outerwear', col: 'new', colors: [{ n: 'Oat', h: '#D4C5A9' }, { n: 'Charcoal', h: '#444' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=750&fit=crop', desc: 'Effortlessly cool oversized blazer. Throw it over anything for instant cool-girl energy.', cond: 'New', badge: 'NEW', stock: 15 },
+  { id: '4', title: 'Platform Canvas Sneakers', price: 54.99, compare: null, cat: 'shoes', col: 'best', colors: [{ n: 'White', h: '#fff' }, { n: 'Black', h: '#1a1a1a' }, { n: 'Sage', h: '#9CAF88' }], sizes: ['6', '6.5', '7', '7.5', '8', '8.5', '9'], img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&h=750&fit=crop', desc: 'Chunky platform sneakers. The 3-inch lift you didn\'t know you needed.', cond: 'New with Tags', badge: null, stock: 22 },
+  { id: '5', title: 'Coquette Bow Mini Skirt', price: 32.99, compare: 45, cat: 'bottoms', col: 'trend', colors: [{ n: 'Ballet Pink', h: '#E8B4B8' }, { n: 'Cream', h: '#FFFDD0' }, { n: 'Black', h: '#1a1a1a' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=750&fit=crop', desc: 'Cutest bow-detail mini with a flirty A-line shape. Coquette era essentials.', cond: 'New', badge: 'TREND', stock: 6 },
+  { id: '6', title: 'Chunky Gold Hoops', price: 18.99, compare: null, cat: 'accessories', col: 'best', colors: [{ n: 'Gold', h: '#D4AF37' }, { n: 'Silver', h: '#C0C0C0' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&h=750&fit=crop', desc: 'Everyday chunky hoops. Hypoallergenic, lightweight, essential.', cond: 'New', badge: null, stock: 45 },
+  { id: '7', title: 'Retro Track Jacket', price: 44.99, compare: 65, cat: 'outerwear', col: 'new', colors: [{ n: 'Red', h: '#CC3333' }, { n: 'Navy', h: '#1B2A4A' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=750&fit=crop', desc: 'Vintage-inspired track jacket with contrast stripes. Y2K throwback.', cond: 'New', badge: 'NEW', stock: 18 },
+  { id: '8', title: 'Floral Wrap Midi Dress', price: 42.99, compare: 64, cat: 'dresses', col: 'trend', colors: [{ n: 'Garden', h: '#E8C4D8' }, { n: 'Blue', h: '#7BA7BC' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&h=750&fit=crop', desc: 'Flowy wrap midi with the prettiest floral print. Perfect for brunch or date night.', cond: 'New', badge: 'TREND', stock: 10 },
+  { id: '9', title: 'Ribbed Crop Tank 3-Pack', price: 28.99, compare: 45, cat: 'tops', col: 'best', colors: [{ n: 'Basics', h: '#555' }, { n: 'Pastels', h: '#DEB5D3' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&h=750&fit=crop', desc: 'Your everyday staple. Three ribbed crop tanks in one pack.', cond: 'New', badge: 'VALUE', stock: 30 },
+  { id: '10', title: 'Baggy Cargo Pants', price: 46.99, compare: 68, cat: 'bottoms', col: 'new', colors: [{ n: 'Khaki', h: '#C3B091' }, { n: 'Black', h: '#1a1a1a' }, { n: 'Olive', h: '#708238' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=750&fit=crop', desc: 'Low-rise baggy cargo with oversized pockets. Streetwear staple.', cond: 'New', badge: 'NEW', stock: 20 },
+  { id: '11', title: 'Beaded Phone Charm', price: 12.99, compare: null, cat: 'accessories', col: 'trend', colors: [{ n: 'Rainbow', h: '#E8B4B8' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&h=750&fit=crop', desc: 'Adorable beaded phone charm. As seen in my TikTok hauls!', cond: 'New', badge: 'TIKTOK', stock: 50 },
+  { id: '12', title: 'Satin Hair Bow Set', price: 14.99, compare: null, cat: 'accessories', col: 'trend', colors: [{ n: 'Assorted', h: '#E8C4D8' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=750&fit=crop', desc: 'Set of 4 oversized satin hair bows in dreamy colors.', cond: 'New', badge: null, stock: 35 },
 ]
+
+/* Map DB product row to local shape */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapProduct(p: any): Product {
+  return {
+    id: p.id,
+    title: p.title,
+    price: Number(p.price),
+    compare: p.compare_price ? Number(p.compare_price) : null,
+    cat: p.category,
+    col: p.collection,
+    colors: p.colors || [{ n: 'Default', h: '#ccc' }],
+    sizes: p.sizes || ['One Size'],
+    img: p.image_url,
+    desc: p.description || '',
+    cond: p.condition || 'New',
+    badge: p.badge,
+    stock: p.stock,
+  }
+}
 
 const CATS = [{ k: 'all', l: 'All' }, { k: 'tops', l: 'Tops' }, { k: 'bottoms', l: 'Bottoms' }, { k: 'dresses', l: 'Dresses' }, { k: 'outerwear', l: 'Outerwear' }, { k: 'shoes', l: 'Shoes' }, { k: 'accessories', l: 'Accessories' }]
 const COLS_NAV = [{ k: 'all', l: 'All Items' }, { k: 'new', l: 'New Arrivals' }, { k: 'best', l: 'Bestsellers' }, { k: 'trend', l: 'Trending' }]
@@ -96,7 +117,7 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>(INIT_PRODUCTS)
   const [view, setView] = useState('home')
   const [cart, setCart] = useState<CartItem[]>([])
-  const [wish, setWish] = useState<Set<number>>(new Set())
+  const [wish, setWish] = useState<Set<string>>(new Set())
   const [selProd, setSelProd] = useState<Product | null>(null)
   const [selColor, setSelColor] = useState(0)
   const [selSize, setSelSize] = useState<string | null>(null)
@@ -116,6 +137,7 @@ export default function Home() {
   const [adminLoginOpen, setAdminLoginOpen] = useState(false)
   const [adminPw, setAdminPw] = useState('')
   const [adminError, setAdminError] = useState('')
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false)
 
   // Sell (admin only)
   const [sellOpen, setSellOpen] = useState(false)
@@ -128,6 +150,19 @@ export default function Home() {
   // Checkout
   const [checkForm, setCheckForm] = useState({ name: '', email: '', address: '', city: '', state: '', zip: '' })
   const [paypalProcessing, setPaypalProcessing] = useState(false)
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null)
+
+  // Fetch products from DB on mount
+  const fetchProducts = useCallback(async () => {
+    try {
+      const res = await fetch('/api/products')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.length > 0) setProducts(data.map(mapProduct))
+      }
+    } catch { /* fallback to INIT_PRODUCTS */ }
+  }, [])
+  useEffect(() => { fetchProducts() }, [fetchProducts])
 
   const notify = (m: string) => { setToast(m); setTimeout(() => setToast(null), 2800) }
   const F = { head: "var(--font-fraunces), 'Fraunces', serif", body: "var(--font-dm-sans), 'DM Sans', sans-serif" }
@@ -175,26 +210,95 @@ export default function Home() {
   const toggleSz = (s: string) => setSellForm(p => ({ ...p, sizes: p.sizes.includes(s) ? p.sizes.filter(x => x !== s) : [...p.sizes, s] }))
   const resetSell = () => { setSellOpen(false); setSellStep(1); setSellImgs([]); setSellForm({ title: '', price: '', compare: '', cat: 'tops', cond: 'New', sizes: [], desc: '' }) }
 
-  const submitListing = () => {
+  const submitListing = async () => {
     if (!sellForm.title || !sellForm.price || sellImgs.length === 0) { notify('Need photo, title & price!'); return }
-    setProducts(p => [{
-      id: Date.now(), title: sellForm.title, price: parseFloat(sellForm.price),
-      compare: sellForm.compare ? parseFloat(sellForm.compare) : null,
-      cat: sellForm.cat, col: 'new', colors: [{ n: 'As Shown', h: '#ccc' }],
-      sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
-      img: sellImgs[0], desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
-    }, ...p])
-    resetSell()
-    notify('Item is LIVE!')
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_PASSWORD },
+        body: JSON.stringify({
+          title: sellForm.title,
+          price: parseFloat(sellForm.price),
+          compare_price: sellForm.compare ? parseFloat(sellForm.compare) : null,
+          category: sellForm.cat,
+          collection: 'new',
+          colors: [{ n: 'As Shown', h: '#ccc' }],
+          sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
+          image_url: sellImgs[0],
+          description: sellForm.desc || '',
+          condition: sellForm.cond,
+          badge: 'NEW',
+          stock: 1,
+        }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setProducts(p => [mapProduct(data), ...p])
+        resetSell()
+        notify('Item is LIVE!')
+      } else {
+        // Fallback to local state if API fails
+        setProducts(p => [{
+          id: crypto.randomUUID(), title: sellForm.title, price: parseFloat(sellForm.price),
+          compare: sellForm.compare ? parseFloat(sellForm.compare) : null,
+          cat: sellForm.cat, col: 'new', colors: [{ n: 'As Shown', h: '#ccc' }],
+          sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
+          img: sellImgs[0], desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
+        }, ...p])
+        resetSell()
+        notify('Item is LIVE! (local only)')
+      }
+    } catch {
+      setProducts(p => [{
+        id: crypto.randomUUID(), title: sellForm.title, price: parseFloat(sellForm.price),
+        compare: sellForm.compare ? parseFloat(sellForm.compare) : null,
+        cat: sellForm.cat, col: 'new', colors: [{ n: 'As Shown', h: '#ccc' }],
+        sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
+        img: sellImgs[0], desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
+      }, ...p])
+      resetSell()
+      notify('Item is LIVE! (local only)')
+    }
   }
 
-  // PayPal checkout
-  const handlePayPal = () => {
-    if (!checkForm.name || !checkForm.email) { notify('Fill in name & email first'); return }
+  // PayPal checkout — real flow via server API
+  const createPayPalOrderHandler = async (): Promise<string> => {
+    if (!checkForm.name || !checkForm.email) { notify('Fill in name & email first'); throw new Error('Missing info') }
+    const res = await fetch('/api/paypal/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: tot.toFixed(2) }),
+    })
+    const data = await res.json()
+    if (!data.id) throw new Error('Failed to create order')
+    return data.id
+  }
+
+  const onPayPalApprove = async (data: { orderID: string }) => {
     setPaypalProcessing(true)
-    setTimeout(() => {
-      setPaypalProcessing(false); setView('success'); setCart([]); setCartOpen(false)
-    }, 2000)
+    try {
+      const res = await fetch('/api/paypal/capture-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paypalOrderId: data.orderID,
+          cart,
+          shipping: checkForm,
+          promo: promoOn ? 'CARDIN10' : null,
+          totals: { subtotal: sub, discount: disc, shipping: ship, total: tot },
+        }),
+      })
+      const result = await res.json()
+      if (result.success) {
+        setLastOrderId(result.orderId || null)
+        setPaypalProcessing(false); setView('success'); setCart([]); setCartOpen(false)
+        fetchProducts() // Refresh stock
+      } else {
+        setPaypalProcessing(false); notify('Payment issue — please try again')
+      }
+    } catch {
+      setPaypalProcessing(false); notify('Payment error — please try again')
+    }
   }
 
   const btn = (bg: string, col: string, ex: React.CSSProperties = {}): React.CSSProperties => ({ padding: '14px 30px', background: bg, color: col, border: 'none', borderRadius: 50, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: F.body, ...ex })
@@ -218,6 +322,7 @@ export default function Home() {
   )
 
   return (
+    <PayPalScriptProvider options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test', currency: 'USD' }}>
     <div style={{ fontFamily: F.body, background: C.bg, minHeight: '100vh' }}>
       {/* TOAST */}
       {toast && <div style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: C.dark, color: '#fff', padding: '11px 26px', borderRadius: 50, fontSize: 13, fontWeight: 600, boxShadow: '0 8px 28px rgba(0,0,0,.2)', animation: 'sd .3s ease' }}>{toast}</div>}
@@ -241,9 +346,15 @@ export default function Home() {
             <button onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.dark }}><IC.Search /></button>
             <a href="https://tiktok.com/@cardinkim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.TikTok /></a>
             <a href="https://youtube.com/@cardinkim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.YouTube /></a>
-            <button onClick={() => { if (isAdmin) { setSellOpen(true); setSellStep(1) } else setAdminLoginOpen(true) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: isAdmin ? C.accent : '#ccc', display: 'flex' }} title={isAdmin ? 'Add Product' : 'Admin Login'}>
-              <IC.Gear />
-            </button>
+            <div style={{ position: 'relative' }}>
+              <button onClick={() => { if (isAdmin) { setAdminMenuOpen(!adminMenuOpen) } else setAdminLoginOpen(true) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: isAdmin ? C.accent : '#ccc', display: 'flex' }} title={isAdmin ? 'Admin Menu' : 'Admin Login'}>
+                <IC.Gear />
+              </button>
+              {isAdmin && adminMenuOpen && <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 8, background: '#fff', borderRadius: 12, boxShadow: '0 8px 30px rgba(0,0,0,.15)', overflow: 'hidden', minWidth: 180, zIndex: 200, animation: 'sd .2s ease' }}>
+                <button onClick={() => { setSellOpen(true); setSellStep(1); setAdminMenuOpen(false) }} style={{ display: 'block', width: '100%', padding: '12px 18px', background: 'none', border: 'none', borderBottom: '1px solid #f0f0f0', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', fontFamily: F.body }}>Add Product</button>
+                <a href="/admin" style={{ display: 'block', padding: '12px 18px', fontSize: 13, fontWeight: 600, color: C.accent, textDecoration: 'none', fontFamily: F.body }}>Admin Dashboard</a>
+              </div>}
+            </div>
             <div onClick={() => setCartOpen(true)}><IC.Cart n={cartN} /></div>
           </div>
         </div>
@@ -470,24 +581,19 @@ export default function Home() {
         {/* PAYPAL BUTTON */}
         <div style={{ background: '#fff', borderRadius: 18, padding: 24, marginBottom: 20, border: '1px solid #eee' }}>
           <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 14 }}>Payment</h3>
-          <button onClick={handlePayPal} disabled={paypalProcessing} className="pp"
-            style={{
-              width: '100%', padding: '18px',
-              background: paypalProcessing ? '#ccc' : '#0070BA',
-              color: '#fff', border: 'none', borderRadius: 50,
-              fontSize: 16, fontWeight: 700, cursor: paypalProcessing ? 'not-allowed' : 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              fontFamily: F.body,
-            }}>
-            {paypalProcessing ? (
-              <><div style={{ width: 18, height: 18, border: '3px solid rgba(255,255,255,.3)', borderTop: '3px solid #fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} /> Processing...</>
-            ) : (
-              <><IC.PayPal /> Pay with PayPal &middot; ${tot.toFixed(2)}</>
-            )}
-          </button>
-          <div style={{ textAlign: 'center', marginTop: 12, fontSize: 12, color: '#999' }}>
-            You&apos;ll be redirected to PayPal to complete payment
-          </div>
+          {paypalProcessing ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: 24 }}>
+              <div style={{ width: 18, height: 18, border: '3px solid rgba(0,0,0,.1)', borderTop: '3px solid #0070BA', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#555' }}>Processing payment...</span>
+            </div>
+          ) : (
+            <PayPalButtons
+              style={{ layout: 'vertical', color: 'blue', shape: 'pill', label: 'paypal' }}
+              createOrder={createPayPalOrderHandler}
+              onApprove={onPayPalApprove}
+              onError={() => notify('PayPal error — please try again')}
+            />
+          )}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, fontSize: 11, color: '#aaa' }}>
             <IC.Shield /> Secure checkout powered by PayPal
           </div>
@@ -501,6 +607,11 @@ export default function Home() {
         <div style={{ fontSize: 60, marginBottom: 18 }}>&#127881;</div>
         <h1 style={{ fontFamily: F.head, fontSize: 34, fontWeight: 900, marginBottom: 14 }}>Order Confirmed!</h1>
         <p style={{ fontSize: 15, color: '#666', lineHeight: 1.7, marginBottom: 10 }}>Thanks for shopping CardinKim!</p>
+        {lastOrderId && <div style={{ background: '#f8f8f6', borderRadius: 14, padding: '16px 20px', marginBottom: 18 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6 }}>Order ID</div>
+          <div style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 600, color: C.dark, marginBottom: 10 }}>{lastOrderId}</div>
+          <a href={`/track?id=${lastOrderId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: C.accent, textDecoration: 'none' }}><IC.Truck /> Track your order &rarr;</a>
+        </div>}
         <p style={{ fontSize: 14, color: '#888', marginBottom: 28 }}>Your PayPal receipt is your confirmation. Follow me for styling tips with your new pieces!</p>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 28 }}>
           <a href="https://tiktok.com/@cardinkim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: C.dark, color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
@@ -534,6 +645,7 @@ export default function Home() {
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Info</div>
             {['About', 'Shipping', 'Size Guide', 'Contact'].map(s => <div key={s} className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, cursor: 'pointer' }}>{s}</div>)}
+            <a href="/track" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Track Order</a>
           </div>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Follow</div>
@@ -545,5 +657,6 @@ export default function Home() {
         <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20, textAlign: 'center' }}><div style={{ fontSize: 11, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
       </footer>
     </div>
+    </PayPalScriptProvider>
   )
 }
