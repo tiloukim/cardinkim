@@ -98,7 +98,7 @@ function TrackPageInner() {
   return (
     <div className="track-page">
       <div className="track-header">
-        <Link href="/" className="track-logo">cardin<span>kim</span></Link>
+        <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" /></Link>
       </div>
 
       <div className="track-container">

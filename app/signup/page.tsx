@@ -40,7 +40,7 @@ export default function SignupPage() {
   return (
     <div className="auth-page">
       <div className="auth-header">
-        <Link href="/" className="auth-logo">cardin<span>kim</span></Link>
+        <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" /></Link>
       </div>
       <div className="auth-container">
         {success ? (

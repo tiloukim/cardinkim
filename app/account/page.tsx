@@ -114,7 +114,7 @@ export default function AccountPage() {
     return (
       <div className="auth-page">
         <div className="auth-header">
-          <Link href="/" className="auth-logo">cardin<span>kim</span></Link>
+          <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" /></Link>
         </div>
         <div className="auth-container" style={{ textAlign: 'center', padding: '80px 24px' }}>
           <div style={{ fontSize: 14, color: '#999' }}>Loading...</div>
@@ -131,7 +131,7 @@ export default function AccountPage() {
   return (
     <div className="account-page">
       <div className="auth-header">
-        <Link href="/" className="auth-logo">cardin<span>kim</span></Link>
+        <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" /></Link>
       </div>
 
       <div className="account-container">
