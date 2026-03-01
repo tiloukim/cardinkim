@@ -746,7 +746,7 @@ input:focus, select:focus, textarea:focus {
   letter-spacing: -1px;
 }
 .auth-logo span { color: #E8453C; }
-.auth-logo-img { height: 36px; display: block; }
+.auth-logo-img { height: 144px; display: block; }
 .auth-container {
   max-width: 420px;
   margin: 0 auto;

@@ -86,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="admin-layout">
       <aside className="admin-sidebar">
         <div className="admin-sidebar-logo">
-          <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" style={{ height: 28, filter: 'brightness(0) invert(1)' }} /></Link>
+          <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" style={{ height: 112, filter: 'brightness(0) invert(1)' }} /></Link>
           <div className="admin-badge">CRM</div>
         </div>
         <nav className="admin-nav">

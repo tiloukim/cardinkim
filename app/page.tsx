@@ -349,7 +349,7 @@ export default function Home() {
           <button className="ms" style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => setMobMenu(true)}><IC.Menu /></button>
           <div onClick={() => { setView('home'); setSearchOpen(false) }} style={{ cursor: 'pointer' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Cardin Kim Closet" style={{ height: 36 }} />
+            <img src="/logo.png" alt="Cardin Kim Closet" style={{ height: 144 }} />
           </div>
           <nav className="do" style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
             {[{ l: 'Shop All', a: () => goShop('all', 'all') }, { l: 'New In', a: () => goShop('all', 'new') }, { l: 'Trending', a: () => goShop('all', 'trend') }].map(({ l, a }) => (
@@ -624,7 +624,7 @@ export default function Home() {
         <div className="fg" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 36, marginBottom: 36 }}>
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Cardin Kim Closet" style={{ height: 32, marginBottom: 12, filter: 'brightness(0) invert(1)' }} />
+            <img src="/logo.png" alt="Cardin Kim Closet" style={{ height: 128, marginBottom: 12, filter: 'brightness(0) invert(1)' }} />
             <p style={{ fontSize: 13, color: '#888', lineHeight: 1.7, maxWidth: 280 }}>Teen fashion that&apos;s affordable, sustainable, and curated by someone who gets your style.</p>
             <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>
               <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.TikTok /></a>
