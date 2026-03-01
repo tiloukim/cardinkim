@@ -41,17 +41,25 @@ const CARRIER_URLS: Record<string, string> = {
 const CARRIER_LABELS: Record<string, string> = { usps: 'USPS', ups: 'UPS', fedex: 'FedEx', dhl: 'DHL' }
 
 export default function AccountPage() {
-  const { user, customer, loading, signOut, refreshCustomer, supabase } = useAuth()
+  const { user, customer, signOut, refreshCustomer, supabase } = useAuth()
   const router = useRouter()
 
   const [orders, setOrders] = useState<OrderWithItems[]>([])
   const [loadingOrders, setLoadingOrders] = useState(true)
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null)
+  const [ready, setReady] = useState(false)
 
   // Profile edit
   const [editing, setEditing] = useState(false)
   const [profileForm, setProfileForm] = useState({ name: '', address: '', city: '', state: '', zip: '' })
   const [saving, setSaving] = useState(false)
+
+  // Wait for auth — max 2 seconds then show page regardless
+  useEffect(() => {
+    if (user) { setReady(true); return }
+    const t = setTimeout(() => setReady(true), 2000)
+    return () => clearTimeout(t)
+  }, [user])
 
   const fetchOrders = useCallback(async () => {
     if (!customer) { setLoadingOrders(false); return }
@@ -101,7 +109,7 @@ export default function AccountPage() {
     router.refresh()
   }
 
-  if (loading) {
+  if (!ready) {
     return (
       <div className="auth-page">
         <div className="auth-header">
