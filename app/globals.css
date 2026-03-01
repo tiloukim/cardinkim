@@ -787,6 +787,11 @@ input:focus, select:focus, textarea:focus {
   color: #E8453C;
   font-weight: 600;
 }
+.auth-success {
+  font-size: 13px;
+  color: #059669;
+  font-weight: 600;
+}
 .auth-btn {
   padding: 15px;
   background: #1a1a1a;
