@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 
 interface Notification {
@@ -20,7 +20,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [notifOpen, setNotifOpen] = useState(false)
   const pathname = usePathname()
-  const router = useRouter()
 
   const isAdmin = !!customer?.is_admin
 
@@ -68,7 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="admin-login-icon">&#128274;</div>
           <h1>Access Denied</h1>
           <p>{!user ? 'Please log in to access the admin dashboard.' : 'Your account does not have admin access.'}</p>
-          <button onClick={() => router.push(user ? '/' : '/login')}>
+          <button onClick={() => { window.location.href = user ? '/' : '/login' }}>
             {user ? 'Back to Store' : 'Go to Login'}
           </button>
         </div>
@@ -106,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/" className="admin-nav-item">
             <span>&#127968;</span> Back to Store
           </Link>
-          <button onClick={async () => { await signOut(); router.push('/login') }} className="admin-logout-btn">
+          <button onClick={async () => { await signOut(); window.location.href = '/login' }} className="admin-logout-btn">
             Logout
           </button>
         </div>
