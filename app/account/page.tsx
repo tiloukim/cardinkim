@@ -51,7 +51,7 @@ export default function AccountPage() {
 
   // Profile edit
   const [editing, setEditing] = useState(false)
-  const [profileForm, setProfileForm] = useState({ name: '', address: '', city: '', state: '', zip: '' })
+  const [profileForm, setProfileForm] = useState({ name: '', phone: '', address: '', city: '', state: '', zip: '' })
   const [saving, setSaving] = useState(false)
 
   // Wait for auth — max 2 seconds then show page regardless
@@ -76,6 +76,7 @@ export default function AccountPage() {
     if (customer) {
       setProfileForm({
         name: customer.name || '',
+        phone: customer.phone || '',
         address: customer.address || '',
         city: customer.city || '',
         state: customer.state || '',
@@ -92,6 +93,7 @@ export default function AccountPage() {
       .from('ck_customers')
       .update({
         name: profileForm.name,
+        phone: profileForm.phone || null,
         address: profileForm.address || null,
         city: profileForm.city || null,
         state: profileForm.state || null,
@@ -155,6 +157,10 @@ export default function AccountPage() {
                 <input value={user.email || ''} disabled className="auth-input" style={{ opacity: 0.6 }} />
               </div>
               <div className="account-field">
+                <label>Phone</label>
+                <input value={profileForm.phone} onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })} className="auth-input" placeholder="(555) 123-4567" type="tel" />
+              </div>
+              <div className="account-field">
                 <label>Address</label>
                 <input value={profileForm.address} onChange={e => setProfileForm({ ...profileForm, address: e.target.value })} className="auth-input" placeholder="123 Main St" />
               </div>
@@ -189,6 +195,12 @@ export default function AccountPage() {
                 <span className="account-info-label">Email</span>
                 <span>{user.email}</span>
               </div>
+              {customer?.phone && (
+                <div className="account-info-row">
+                  <span className="account-info-label">Phone</span>
+                  <span>{customer.phone}</span>
+                </div>
+              )}
               {customer?.address && (
                 <div className="account-info-row">
                   <span className="account-info-label">Address</span>
