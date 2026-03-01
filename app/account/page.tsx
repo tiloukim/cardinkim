@@ -54,7 +54,7 @@ export default function AccountPage() {
   const [saving, setSaving] = useState(false)
 
   const fetchOrders = useCallback(async () => {
-    if (!customer) return
+    if (!customer) { setLoadingOrders(false); return }
     const { data } = await supabase
       .from('ck_orders')
       .select('*, ck_order_items(*)')

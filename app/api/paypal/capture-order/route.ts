@@ -95,14 +95,16 @@ export async function POST(req: Request) {
       image_url: item.img,
     }))
 
-    await supabase.from('ck_order_items').insert(items)
+    const { error: itemsErr } = await supabase.from('ck_order_items').insert(items)
+    if (itemsErr) console.error('Order items insert error:', itemsErr, 'items:', JSON.stringify(items))
 
     // Decrement stock
     for (const item of cart) {
-      await supabase.rpc('ck_decrement_stock', {
+      const { error: stockErr } = await supabase.rpc('ck_decrement_stock', {
         p_id: item.id,
         qty: item.qty,
       })
+      if (stockErr) console.error('Stock decrement error:', stockErr, 'product:', item.id)
     }
 
     // Create notification
