@@ -41,20 +41,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, fetchCustomer])
 
   useEffect(() => {
-    const getSession = async () => {
+    let mounted = true
+
+    const init = async () => {
       try {
-        const { data: { user: u } } = await supabase.auth.getUser()
+        // Use getSession() for fast local check (no network request)
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!mounted) return
+        const u = session?.user ?? null
         setUser(u)
         if (u) await fetchCustomer(u.id)
       } catch {
+        if (!mounted) return
         setUser(null)
         setCustomer(null)
       }
-      setLoading(false)
+      if (mounted) setLoading(false)
     }
-    getSession()
+    init()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return
       const u = session?.user ?? null
       setUser(u)
       if (u) {
@@ -65,7 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   }, [supabase, fetchCustomer])
 
   const signOut = useCallback(async () => {
