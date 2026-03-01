@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS ck_customers (
   city TEXT,
   state TEXT,
   zip TEXT,
+  auth_id UUID UNIQUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

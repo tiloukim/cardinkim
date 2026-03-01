@@ -40,6 +40,7 @@ export interface Customer {
   city: string | null
   state: string | null
   zip: string | null
+  auth_id: string | null
   created_at: string
 }
 

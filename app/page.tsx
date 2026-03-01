@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
+import { useAuth } from '@/lib/auth-context'
 
 /* ═══════════════════════════════════════════════════
    CARDINKIM.COM — Teen Ecommerce
@@ -104,7 +105,7 @@ const IC = {
   Menu: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>,
   TikTok: () => <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.87a8.28 8.28 0 004.84 1.56V6.98a4.84 4.84 0 01-1.08-.29z" /></svg>,
   YouTube: () => <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>,
-  Insta: () => <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>,
+  User: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>,
   Lock: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>,
   PayPal: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 01-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 00-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 00-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 00.554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.81-5.164a.932.932 0 01.92-.789h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.768-4.396z" /></svg>,
   Gear: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" /></svg>,
@@ -114,6 +115,7 @@ const fb = (t: string) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="
 
 /* ═══ MAIN APP ═══ */
 export default function Home() {
+  const { user, customer } = useAuth()
   const [products, setProducts] = useState<Product[]>(INIT_PRODUCTS)
   const [view, setView] = useState('home')
   const [cart, setCart] = useState<CartItem[]>([])
@@ -163,6 +165,20 @@ export default function Home() {
     } catch { /* fallback to INIT_PRODUCTS */ }
   }, [])
   useEffect(() => { fetchProducts() }, [fetchProducts])
+
+  // Pre-fill checkout from customer profile
+  useEffect(() => {
+    if (customer) {
+      setCheckForm(f => ({
+        name: f.name || customer.name || '',
+        email: f.email || customer.email || '',
+        address: f.address || customer.address || '',
+        city: f.city || customer.city || '',
+        state: f.state || customer.state || '',
+        zip: f.zip || customer.zip || '',
+      }))
+    }
+  }, [customer])
 
   const notify = (m: string) => { setToast(m); setTimeout(() => setToast(null), 2800) }
   const F = { head: "var(--font-fraunces), 'Fraunces', serif", body: "var(--font-dm-sans), 'DM Sans', sans-serif" }
@@ -346,6 +362,7 @@ export default function Home() {
             <button onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.dark }}><IC.Search /></button>
             <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.TikTok /></a>
             <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.YouTube /></a>
+            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.dark, textDecoration: 'none', fontSize: 12, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
             <div style={{ position: 'relative' }}>
               <button onClick={() => { if (isAdmin) { setAdminMenuOpen(!adminMenuOpen) } else setAdminLoginOpen(true) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: isAdmin ? C.accent : '#ccc', display: 'flex' }} title={isAdmin ? 'Admin Menu' : 'Admin Login'}>
                 <IC.Gear />
@@ -365,10 +382,10 @@ export default function Home() {
       {mobMenu && <div style={{ position: 'fixed', inset: 0, background: 'rgba(250,249,246,.98)', zIndex: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
         <button onClick={() => setMobMenu(false)} style={{ position: 'absolute', top: 18, right: 18, background: '#f0f0f0', border: 'none', borderRadius: '50%', width: 40, height: 40, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IC.X /></button>
         {['Shop All', 'New In', 'Trending'].map(l => <span key={l} onClick={() => { goShop('all', l === 'Shop All' ? 'all' : l === 'New In' ? 'new' : 'trend'); setMobMenu(false) }} style={{ fontSize: 22, fontWeight: 700, color: C.dark, cursor: 'pointer' }}>{l}</span>)}
+        <a href={user ? '/account' : '/login'} onClick={() => setMobMenu(false)} style={{ fontSize: 22, fontWeight: 700, color: C.dark, cursor: 'pointer', textDecoration: 'none' }}>{user ? 'Account' : 'Sign In'}</a>
         <div style={{ display: 'flex', gap: 18, marginTop: 12 }}>
           <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.TikTok /></a>
           <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.YouTube /></a>
-          <a href="https://instagram.com/cardinkim" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.Insta /></a>
         </div>
       </div>}
 
@@ -635,7 +652,6 @@ export default function Home() {
             <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>
               <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.TikTok /></a>
               <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.YouTube /></a>
-              <a href="https://instagram.com/cardinkim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.Insta /></a>
             </div>
           </div>
           <div>
@@ -651,7 +667,6 @@ export default function Home() {
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Follow</div>
             <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>TikTok</a>
             <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>YouTube</a>
-            <a href="https://instagram.com/cardinkim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>Instagram</a>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20, textAlign: 'center' }}><div style={{ fontSize: 11, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
