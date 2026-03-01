@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, type ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import type { Customer } from '@/lib/types'
@@ -25,15 +25,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [customer, setCustomer] = useState<Customer | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  // Stable client reference — never recreated
+  const supabase = useMemo(() => createClient(), [])
 
   const fetchCustomer = useCallback(async (authId: string) => {
-    const { data } = await supabase
-      .from('ck_customers')
-      .select('*')
-      .eq('auth_id', authId)
-      .single()
-    setCustomer(data)
+    try {
+      const { data } = await supabase
+        .from('ck_customers')
+        .select('*')
+        .eq('auth_id', authId)
+        .single()
+      setCustomer(data)
+    } catch {
+      setCustomer(null)
+    }
   }, [supabase])
 
   const refreshCustomer = useCallback(async () => {
@@ -42,9 +47,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const getSession = async () => {
-      const { data: { user: u } } = await supabase.auth.getUser()
-      setUser(u)
-      if (u) await fetchCustomer(u.id)
+      try {
+        const { data: { user: u } } = await supabase.auth.getUser()
+        setUser(u)
+        if (u) await fetchCustomer(u.id)
+      } catch {
+        setUser(null)
+        setCustomer(null)
+      }
       setLoading(false)
     }
     getSession()
@@ -63,11 +73,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [supabase, fetchCustomer])
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut()
     setUser(null)
     setCustomer(null)
-  }
+  }, [supabase])
 
   return (
     <AuthContext.Provider value={{ user, customer, loading, signOut, refreshCustomer }}>
