@@ -530,10 +530,10 @@ export default function Home() {
       {view === 'home' && <>
         {/* HERO — split layout */}
         <section style={{ background: 'linear-gradient(170deg, #FFF5F3, #FAF9F6)', padding: '45px 24px 55px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: 'rgba(232,69,60,.06)', filter: 'blur(60px)' }} />
+          <div style={{ position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: 'rgba(232,69,60,.06)', filter: 'blur(60px)', pointerEvents: 'none' }} />
           <div className="hg" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center', animation: 'fu .6s ease' }}>
             <div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 18, justifyContent: 'center' }}>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 18, justifyContent: 'center', position: 'relative', zIndex: 5 }}>
                 <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', textDecoration: 'none' }}><IC.TikTok /> {followers}+ FOLLOWERS</a>
                 <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', textDecoration: 'none' }}><IC.YouTube /> {ytSubs}+ SUBSCRIBERS</a>
               </div>
