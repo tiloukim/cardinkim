@@ -749,28 +749,27 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer style={{ background: C.dark, color: '#fff', padding: '50px 24px 28px', textAlign: 'center' }}>
-        <p style={{ fontSize: 26, color: '#888', lineHeight: 1.7, maxWidth: 600, margin: '0 auto 28px' }}>Teen fashion that&apos;s affordable, sustainable, and curated by someone who gets your style.</p>
         <div className="fg" style={{ maxWidth: 800, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 36, marginBottom: 36 }}>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Shop</div>
-            {['New Arrivals', 'Bestsellers', 'Trending', 'All Items'].map(s => <div key={s} className="fl" onClick={() => goShop('all', s === 'All Items' ? 'all' : s === 'New Arrivals' ? 'new' : s.toLowerCase())} style={{ fontSize: 26, color: '#888', marginBottom: 12, cursor: 'pointer' }}>{s}</div>)}
+            <div style={{ fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Shop</div>
+            {['New Arrivals', 'Bestsellers', 'Trending', 'All Items'].map(s => <div key={s} className="fl" onClick={() => goShop('all', s === 'All Items' ? 'all' : s === 'New Arrivals' ? 'new' : s.toLowerCase())} style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer' }}>{s}</div>)}
           </div>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Info</div>
-            {['About', 'Shipping', 'Size Guide', 'Contact'].map(s => <div key={s} className="fl" style={{ fontSize: 26, color: '#888', marginBottom: 12, cursor: 'pointer' }}>{s}</div>)}
-            <a href="/track" className="fl" style={{ fontSize: 26, color: '#888', marginBottom: 12, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Track Order</a>
+            <div style={{ fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Info</div>
+            {['About', 'Shipping', 'Size Guide', 'Contact'].map(s => <div key={s} className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer' }}>{s}</div>)}
+            <a href="/track" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Track Order</a>
           </div>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Follow</div>
-            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 26, color: '#888', marginBottom: 12, display: 'block', textDecoration: 'none' }}>TikTok</a>
-            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 26, color: '#888', marginBottom: 12, display: 'block', textDecoration: 'none' }}>YouTube</a>
+            <div style={{ fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Follow</div>
+            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, display: 'block', textDecoration: 'none' }}>TikTok</a>
+            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, display: 'block', textDecoration: 'none' }}>YouTube</a>
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginBottom: 24 }}>
           <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.TikTok /></a>
           <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.YouTube /></a>
         </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20 }}><div style={{ fontSize: 22, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20 }}><div style={{ fontSize: 15, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
       </footer>
     </div>
     </PayPalScriptProvider>
