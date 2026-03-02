@@ -368,7 +368,7 @@ export default function Home() {
           {/* Left: hamburger (mobile) + search (desktop) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <button className="ms" style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => setMobMenu(true)}><IC.Menu /></button>
-            <button className="do" onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.dark, display: 'flex' }}><IC.Search /></button>
+            <button className="do" onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.accent, display: 'flex' }}><IC.Search /></button>
           </div>
           {/* Center: logo */}
           <div onClick={() => { setView('home'); setSearchOpen(false) }} style={{ cursor: 'pointer', textAlign: 'center' }}>
@@ -377,16 +377,16 @@ export default function Home() {
           </div>
           {/* Right: icons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, justifyContent: 'flex-end' }}>
-            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.TikTok /></a>
-            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.YouTube /></a>
-            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.dark, textDecoration: 'none', fontSize: 24, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
-            <div onClick={() => setCartOpen(true)} style={{ cursor: 'pointer' }}><IC.Cart n={cartN} /></div>
+            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.accent, display: 'flex' }}><IC.TikTok /></a>
+            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.accent, display: 'flex' }}><IC.YouTube /></a>
+            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.accent, textDecoration: 'none', fontSize: 24, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
+            <div onClick={() => setCartOpen(true)} style={{ cursor: 'pointer', color: C.accent }}><IC.Cart n={cartN} /></div>
           </div>
         </div>
         {/* Nav row: centered links */}
         <nav className="do" style={{ display: 'flex', justifyContent: 'center', gap: 32, padding: '0 24px 12px', borderTop: 'none' }}>
           {[{ l: 'Shop All', a: () => goShop('all', 'all') }, { l: 'New In', a: () => goShop('all', 'new') }, { l: 'Trending', a: () => goShop('all', 'trend') }, { l: 'Bestsellers', a: () => goShop('all', 'best') }].map(({ l, a }) => (
-            <span key={l} className="nl" onClick={a} style={{ fontSize: 26, fontWeight: 600, color: '#333', cursor: 'pointer', letterSpacing: '.3px' }}>{l}</span>
+            <span key={l} className="nl" onClick={a} style={{ fontSize: 17, fontWeight: 600, color: C.accent, cursor: 'pointer', letterSpacing: '.3px' }}>{l}</span>
           ))}
         </nav>
         {searchOpen && <div style={{ padding: '0 24px 12px', maxWidth: 1280, margin: '0 auto' }}><input autoFocus placeholder="Search items..." value={search} onChange={e => { setSearch(e.target.value); setView('shop'); setCat('all'); setCol('all') }} style={{ width: '100%', padding: '12px 20px', border: '2px solid #eee', borderRadius: 50, fontSize: 14, fontFamily: F.body }} /></div>}
