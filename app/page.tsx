@@ -520,11 +520,13 @@ export default function Home() {
               </div>
             </div>
             <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', aspectRatio: '9/16', maxHeight: 580 }}>
-              <iframe
-                src="https://www.tiktok.com/embed/v2/7610933568897944863"
-                style={{ width: '100%', height: '100%', border: 'none' }}
-                allow="accelerometer; autoplay; encrypted-media; gyroscope"
-                allowFullScreen
+              <video
+                src="/tiktok-video.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
           </div>
