@@ -135,6 +135,10 @@ export default function Home() {
   const [promo, setPromo] = useState('')
   const [promoOn, setPromoOn] = useState(false)
   const [annBar, setAnnBar] = useState(true)
+  const [followers, setFollowers] = useState('101K')
+  const heroVidRef = useRef<HTMLVideoElement>(null)
+  const heroVideos = ['/tiktok-video.mp4', '/tiktok-video2.mp4']
+  const heroVidIdx = useRef(0)
 
   // Admin — derived from auth
   const isAdmin = !!customer?.is_admin
@@ -168,6 +172,18 @@ export default function Home() {
     } catch { /* fallback to INIT_PRODUCTS */ }
   }, [])
   useEffect(() => { fetchProducts() }, [fetchProducts])
+
+  // Fetch TikTok follower count
+  useEffect(() => {
+    fetch('/api/tiktok').then(r => r.json()).then(d => { if (d.followers) setFollowers(d.followers) }).catch(() => {})
+  }, [])
+
+  // Hero video playlist handler
+  const onHeroVideoEnded = useCallback(() => {
+    heroVidIdx.current = (heroVidIdx.current + 1) % heroVideos.length
+    const vid = heroVidRef.current
+    if (vid) { vid.src = heroVideos[heroVidIdx.current]; vid.play() }
+  }, [heroVideos])
 
   // Pre-fill checkout from customer profile
   useEffect(() => {
@@ -511,7 +527,7 @@ export default function Home() {
           <div style={{ position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: 'rgba(232,69,60,.06)', filter: 'blur(60px)' }} />
           <div className="hg" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center', animation: 'fu .6s ease' }}>
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.dark, color: '#fff', padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', marginBottom: 18 }}><IC.TikTok /> 101K+ FOLLOWERS</div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', marginBottom: 18 }}><IC.TikTok /> {followers}+ FOLLOWERS</div>
               <h1 style={{ fontFamily: F.head, fontSize: 'clamp(32px,4.5vw,50px)', fontWeight: 900, lineHeight: 1.08, color: C.dark, marginBottom: 18 }}>Teen Fashion<br />That&apos;s <span style={{ color: C.accent, fontStyle: 'italic' }}>Actually</span><br />Affordable</h1>
               <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -521,11 +537,12 @@ export default function Home() {
             </div>
             <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', aspectRatio: '9/16', maxHeight: 580 }}>
               <video
+                ref={heroVidRef}
                 src="/tiktok-video.mp4"
                 autoPlay
-                loop
                 muted
                 playsInline
+                onEnded={onHeroVideoEnded}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
