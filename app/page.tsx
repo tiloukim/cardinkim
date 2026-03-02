@@ -209,7 +209,7 @@ export default function Home() {
 
   const notify = (m: string) => { setToast(m); setTimeout(() => setToast(null), 2800) }
   const F = { head: "var(--font-fraunces), 'Fraunces', serif", body: "var(--font-dm-sans), 'DM Sans', sans-serif" }
-  const C = { accent: '#F9A8C9', dark: '#1a1a1a', bg: '#FAF9F6' }
+  const C = { accent: '#F9A8C9', nav: '#B8E8FF', dark: '#1a1a1a', bg: '#FAF9F6' }
 
   // Cart calculations
   const cartN = cart.reduce((s, i) => s + i.qty, 0)
@@ -367,7 +367,7 @@ export default function Home() {
       {toast && <div style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: C.dark, color: '#fff', padding: '11px 26px', borderRadius: 50, fontSize: 13, fontWeight: 600, boxShadow: '0 8px 28px rgba(0,0,0,.2)', animation: 'sd .3s ease' }}>{toast}</div>}
 
       {/* ANNOUNCEMENT */}
-      {annBar && <div style={{ background: '#F9A8C9', color: '#fff', textAlign: 'center', padding: '9px 40px', fontSize: 11, fontWeight: 600, letterSpacing: '.5px', position: 'relative' }}>FREE SHIPPING $50+ &middot; CODE <span style={{ color: '#fff', fontWeight: 800 }}>CARDIN10</span> = 10% OFF<button onClick={() => setAnnBar(false)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,.6)', cursor: 'pointer', fontSize: 16 }}>&times;</button></div>}
+      {annBar && <div style={{ background: '#B8E8FF', color: '#fff', textAlign: 'center', padding: '9px 40px', fontSize: 11, fontWeight: 600, letterSpacing: '.5px', position: 'relative' }}>FREE SHIPPING $50+ &middot; CODE <span style={{ color: '#fff', fontWeight: 800 }}>CARDIN10</span> = 10% OFF<button onClick={() => setAnnBar(false)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,.6)', cursor: 'pointer', fontSize: 16 }}>&times;</button></div>}
 
       {/* HEADER */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, background: '#fff', borderBottom: '1px solid #e5e5e5' }}>
@@ -375,8 +375,8 @@ export default function Home() {
         <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', padding: '10px 24px' }}>
           {/* Left: hamburger (mobile) + search (desktop) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <button className="ms" style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: C.accent }} onClick={() => setMobMenu(true)}><IC.Menu /></button>
-            <button className="do" onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.accent, display: 'flex' }}><IC.Search /></button>
+            <button className="ms" style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: C.nav }} onClick={() => setMobMenu(true)}><IC.Menu /></button>
+            <button className="do" onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.nav, display: 'flex' }}><IC.Search /></button>
           </div>
           {/* Center: logo */}
           <div onClick={() => { setView('home'); setSearchOpen(false) }} style={{ cursor: 'pointer', textAlign: 'center' }}>
@@ -385,16 +385,16 @@ export default function Home() {
           </div>
           {/* Right: icons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, justifyContent: 'flex-end' }}>
-            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.accent, display: 'flex' }}><IC.TikTok /></a>
-            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.accent, display: 'flex' }}><IC.YouTube /></a>
-            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.accent, textDecoration: 'none', fontSize: 24, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
-            <div onClick={() => setCartOpen(true)} style={{ cursor: 'pointer', color: C.accent }}><IC.Cart n={cartN} /></div>
+            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.nav, display: 'flex' }}><IC.TikTok /></a>
+            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.nav, display: 'flex' }}><IC.YouTube /></a>
+            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.nav, textDecoration: 'none', fontSize: 24, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
+            <div onClick={() => setCartOpen(true)} style={{ cursor: 'pointer', color: C.nav }}><IC.Cart n={cartN} /></div>
           </div>
         </div>
         {/* Nav row: centered links */}
         <nav className="do" style={{ display: 'flex', justifyContent: 'center', gap: 32, padding: '0 24px 12px', borderTop: 'none' }}>
           {[{ l: 'Shop All', a: () => goShop('all', 'all') }, { l: 'New In', a: () => goShop('all', 'new') }, { l: 'Trending', a: () => goShop('all', 'trend') }, { l: 'Bestsellers', a: () => goShop('all', 'best') }].map(({ l, a }) => (
-            <span key={l} className="nl" onClick={a} style={{ fontSize: 17, fontWeight: 600, color: C.accent, cursor: 'pointer', letterSpacing: '.3px' }}>{l}</span>
+            <span key={l} className="nl" onClick={a} style={{ fontSize: 17, fontWeight: 600, color: C.nav, cursor: 'pointer', letterSpacing: '.3px' }}>{l}</span>
           ))}
         </nav>
         {searchOpen && <div style={{ padding: '0 24px 12px', maxWidth: 1280, margin: '0 auto' }}><input autoFocus placeholder="Search items..." value={search} onChange={e => { setSearch(e.target.value); setView('shop'); setCat('all'); setCol('all') }} style={{ width: '100%', padding: '12px 20px', border: '2px solid #eee', borderRadius: 50, fontSize: 14, fontFamily: F.body }} /></div>}
