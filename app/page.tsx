@@ -209,7 +209,7 @@ export default function Home() {
 
   const notify = (m: string) => { setToast(m); setTimeout(() => setToast(null), 2800) }
   const F = { head: "var(--font-fraunces), 'Fraunces', serif", body: "var(--font-dm-sans), 'DM Sans', sans-serif" }
-  const C = { accent: '#F9A8C9', nav: '#B8E8FF', dark: '#1a1a1a', bg: '#FAF9F6' }
+  const C = { accent: '#F9A8C9', nav: '#00B2FF', dark: '#1a1a1a', bg: '#FAF9F6' }
 
   // Cart calculations
   const cartN = cart.reduce((s, i) => s + i.qty, 0)
@@ -367,7 +367,7 @@ export default function Home() {
       {toast && <div style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: C.dark, color: '#fff', padding: '11px 26px', borderRadius: 50, fontSize: 13, fontWeight: 600, boxShadow: '0 8px 28px rgba(0,0,0,.2)', animation: 'sd .3s ease' }}>{toast}</div>}
 
       {/* ANNOUNCEMENT */}
-      {annBar && <div style={{ background: '#B8E8FF', color: '#fff', textAlign: 'center', padding: '9px 40px', fontSize: 11, fontWeight: 600, letterSpacing: '.5px', position: 'relative' }}>FREE SHIPPING $50+ &middot; CODE <span style={{ color: '#fff', fontWeight: 800 }}>CARDIN10</span> = 10% OFF<button onClick={() => setAnnBar(false)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,.6)', cursor: 'pointer', fontSize: 16 }}>&times;</button></div>}
+      {annBar && <div style={{ background: '#00B2FF', color: '#fff', textAlign: 'center', padding: '9px 40px', fontSize: 11, fontWeight: 600, letterSpacing: '.5px', position: 'relative' }}>FREE SHIPPING $50+ &middot; CODE <span style={{ color: '#fff', fontWeight: 800 }}>CARDIN10</span> = 10% OFF<button onClick={() => setAnnBar(false)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,.6)', cursor: 'pointer', fontSize: 16 }}>&times;</button></div>}
 
       {/* HEADER */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, background: '#fff', borderBottom: '1px solid #e5e5e5' }}>
