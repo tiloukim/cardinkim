@@ -51,8 +51,8 @@ export default function LoginPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-header">
-        <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" /></Link>
+      <div className="auth-header" style={{ textAlign: 'center' }}>
+        <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" style={{ margin: '0 auto' }} /></Link>
       </div>
       <div className="auth-container">
         <h1 className="auth-title">{forgotMode ? 'Reset Password' : 'Welcome Back'}</h1>

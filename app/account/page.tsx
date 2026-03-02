@@ -113,8 +113,8 @@ export default function AccountPage() {
   if (!ready) {
     return (
       <div className="auth-page">
-        <div className="auth-header">
-          <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" /></Link>
+        <div className="auth-header" style={{ textAlign: 'center' }}>
+          <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" style={{ margin: '0 auto' }} /></Link>
         </div>
         <div className="auth-container" style={{ textAlign: 'center', padding: '80px 24px' }}>
           <div style={{ fontSize: 14, color: '#999' }}>Loading...</div>
@@ -130,12 +130,19 @@ export default function AccountPage() {
 
   return (
     <div className="account-page">
-      <div className="auth-header">
-        <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" /></Link>
+      <div className="auth-header" style={{ textAlign: 'center' }}>
+        <Link href="/"><img src="/logo.png" alt="Cardin Kim Closet" className="auth-logo-img" style={{ margin: '0 auto' }} /></Link>
       </div>
 
       <div className="account-container">
         <h1 className="account-title">My Account</h1>
+
+        {/* Admin CRM Button */}
+        {customer?.is_admin && (
+          <Link href="/admin" style={{ display: 'block', textAlign: 'center', background: '#F9A8C9', color: '#1a1a1a', padding: '14px 30px', borderRadius: 50, fontSize: 14, fontWeight: 700, textDecoration: 'none', marginBottom: 20 }}>
+            Admin Dashboard &rarr;
+          </Link>
+        )}
 
         {/* Profile Card */}
         <div className="account-card">
