@@ -136,6 +136,7 @@ export default function Home() {
   const [promoOn, setPromoOn] = useState(false)
   const [annBar, setAnnBar] = useState(true)
   const [followers, setFollowers] = useState('101K')
+  const [ytSubs, setYtSubs] = useState('1K')
   const heroVidRef = useRef<HTMLVideoElement>(null)
   const heroVideos = ['/tiktok-video.mp4', '/tiktok-video2.mp4']
   const heroVidIdx = useRef(0)
@@ -176,6 +177,11 @@ export default function Home() {
   // Fetch TikTok follower count
   useEffect(() => {
     fetch('/api/tiktok').then(r => r.json()).then(d => { if (d.followers) setFollowers(d.followers) }).catch(() => {})
+  }, [])
+
+  // Fetch YouTube subscriber count
+  useEffect(() => {
+    fetch('/api/youtube').then(r => r.json()).then(d => { if (d.subscribers) setYtSubs(d.subscribers) }).catch(() => {})
   }, [])
 
   // Hero video playlist handler
@@ -367,7 +373,7 @@ export default function Home() {
         <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', padding: '10px 24px' }}>
           {/* Left: hamburger (mobile) + search (desktop) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <button className="ms" style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => setMobMenu(true)}><IC.Menu /></button>
+            <button className="ms" style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: C.accent }} onClick={() => setMobMenu(true)}><IC.Menu /></button>
             <button className="do" onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.accent, display: 'flex' }}><IC.Search /></button>
           </div>
           {/* Center: logo */}
@@ -394,12 +400,12 @@ export default function Home() {
 
       {/* MOBILE MENU */}
       {mobMenu && <div style={{ position: 'fixed', inset: 0, background: 'rgba(250,249,246,.98)', zIndex: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
-        <button onClick={() => setMobMenu(false)} style={{ position: 'absolute', top: 18, right: 18, background: '#f0f0f0', border: 'none', borderRadius: '50%', width: 40, height: 40, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IC.X /></button>
-        {['Shop All', 'New In', 'Trending'].map(l => <span key={l} onClick={() => { goShop('all', l === 'Shop All' ? 'all' : l === 'New In' ? 'new' : 'trend'); setMobMenu(false) }} style={{ fontSize: 22, fontWeight: 700, color: C.dark, cursor: 'pointer' }}>{l}</span>)}
-        <a href={user ? '/account' : '/login'} onClick={() => setMobMenu(false)} style={{ fontSize: 22, fontWeight: 700, color: C.dark, cursor: 'pointer', textDecoration: 'none' }}>{user ? 'Account' : 'Sign In'}</a>
+        <button onClick={() => setMobMenu(false)} style={{ position: 'absolute', top: 18, right: 18, background: '#f0f0f0', border: 'none', borderRadius: '50%', width: 40, height: 40, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.accent }}><IC.X /></button>
+        {['Shop All', 'New In', 'Trending', 'Bestsellers'].map(l => <span key={l} onClick={() => { goShop('all', l === 'Shop All' ? 'all' : l === 'New In' ? 'new' : l === 'Trending' ? 'trend' : 'best'); setMobMenu(false) }} style={{ fontSize: 22, fontWeight: 700, color: C.accent, cursor: 'pointer' }}>{l}</span>)}
+        <a href={user ? '/account' : '/login'} onClick={() => setMobMenu(false)} style={{ fontSize: 22, fontWeight: 700, color: C.accent, cursor: 'pointer', textDecoration: 'none' }}>{user ? 'Account' : 'Sign In'}</a>
         <div style={{ display: 'flex', gap: 18, marginTop: 12 }}>
-          <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.TikTok /></a>
-          <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ color: C.dark }}><IC.YouTube /></a>
+          <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ color: C.accent }}><IC.TikTok /></a>
+          <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ color: C.accent }}><IC.YouTube /></a>
         </div>
       </div>}
 
@@ -527,7 +533,10 @@ export default function Home() {
           <div style={{ position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: 'rgba(232,69,60,.06)', filter: 'blur(60px)' }} />
           <div className="hg" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center', animation: 'fu .6s ease' }}>
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', marginBottom: 18 }}><IC.TikTok /> {followers}+ FOLLOWERS</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 18, justifyContent: 'center' }}>
+                <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', textDecoration: 'none' }}><IC.TikTok /> {followers}+ FOLLOWERS</a>
+                <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', textDecoration: 'none' }}><IC.YouTube /> {ytSubs}+ SUBSCRIBERS</a>
+              </div>
               <h1 style={{ fontFamily: F.head, fontSize: 'clamp(32px,4.5vw,50px)', fontWeight: 900, lineHeight: 1.08, color: C.dark, marginBottom: 18 }}>Teen Fashion<br />That&apos;s <span style={{ color: C.accent, fontStyle: 'italic' }}>Actually</span><br />Affordable</h1>
               <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
               <div className="hero-btns" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
