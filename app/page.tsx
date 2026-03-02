@@ -530,7 +530,7 @@ export default function Home() {
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', marginBottom: 18 }}><IC.TikTok /> {followers}+ FOLLOWERS</div>
               <h1 style={{ fontFamily: F.head, fontSize: 'clamp(32px,4.5vw,50px)', fontWeight: 900, lineHeight: 1.08, color: C.dark, marginBottom: 18 }}>Teen Fashion<br />That&apos;s <span style={{ color: C.accent, fontStyle: 'italic' }}>Actually</span><br />Affordable</h1>
               <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <div className="hero-btns" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <button onClick={() => goShop('all', 'new')} className="bp" style={btn(C.accent, C.dark, { fontSize: 15 })}>Shop New Arrivals</button>
                 <button onClick={() => goShop('all', 'all')} className="bp" style={btn(C.accent, C.dark, { fontSize: 15 })}>Browse All</button>
               </div>
@@ -592,7 +592,7 @@ export default function Home() {
 
         {/* TRENDING NOW */}
         <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
+          <div className="sec-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 4, height: 28, background: C.accent, borderRadius: 2 }} />
               <h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900 }}>Trending Now</h2>
@@ -606,7 +606,7 @@ export default function Home() {
         <section style={{ background: C.dark, color: '#fff', padding: '50px 24px' }}>
           <div className="social-grid" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
             <div>
-              <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
+              <div style={{ display: 'flex', gap: 12, marginBottom: 18, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.accent, color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
                 <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.accent, color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
               </div>
@@ -622,7 +622,7 @@ export default function Home() {
 
         {/* JUST DROPPED */}
         <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px 55px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
+          <div className="sec-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 4, height: 28, background: C.accent, borderRadius: 2 }} />
               <h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900 }}>Just Dropped</h2>
