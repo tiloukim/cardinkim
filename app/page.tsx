@@ -191,6 +191,16 @@ export default function Home() {
     if (vid) { vid.src = heroVideos[heroVidIdx.current]; vid.play() }
   }, [heroVideos])
 
+  // Set hero video volume to medium-low and attempt unmute
+  useEffect(() => {
+    const vid = heroVidRef.current
+    if (!vid) return
+    vid.volume = 0.25
+    vid.muted = false
+    const p = vid.play()
+    if (p) p.catch(() => { vid.muted = true; vid.play() })
+  }, [])
+
   // Pre-fill checkout from customer profile
   useEffect(() => {
     if (customer) {
