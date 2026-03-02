@@ -379,14 +379,14 @@ export default function Home() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, justifyContent: 'flex-end' }}>
             <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.TikTok /></a>
             <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.dark, display: 'flex' }}><IC.YouTube /></a>
-            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.dark, textDecoration: 'none', fontSize: 12, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
+            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.dark, textDecoration: 'none', fontSize: 24, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
             <div onClick={() => setCartOpen(true)} style={{ cursor: 'pointer' }}><IC.Cart n={cartN} /></div>
           </div>
         </div>
         {/* Nav row: centered links */}
         <nav className="do" style={{ display: 'flex', justifyContent: 'center', gap: 32, padding: '0 24px 12px', borderTop: 'none' }}>
           {[{ l: 'Shop All', a: () => goShop('all', 'all') }, { l: 'New In', a: () => goShop('all', 'new') }, { l: 'Trending', a: () => goShop('all', 'trend') }, { l: 'Bestsellers', a: () => goShop('all', 'best') }].map(({ l, a }) => (
-            <span key={l} className="nl" onClick={a} style={{ fontSize: 13, fontWeight: 600, color: '#333', cursor: 'pointer', letterSpacing: '.3px' }}>{l}</span>
+            <span key={l} className="nl" onClick={a} style={{ fontSize: 26, fontWeight: 600, color: '#333', cursor: 'pointer', letterSpacing: '.3px' }}>{l}</span>
           ))}
         </nav>
         {searchOpen && <div style={{ padding: '0 24px 12px', maxWidth: 1280, margin: '0 auto' }}><input autoFocus placeholder="Search items..." value={search} onChange={e => { setSearch(e.target.value); setView('shop'); setCat('all'); setCol('all') }} style={{ width: '100%', padding: '12px 20px', border: '2px solid #eee', borderRadius: 50, fontSize: 14, fontFamily: F.body }} /></div>}
@@ -749,28 +749,28 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer style={{ background: C.dark, color: '#fff', padding: '50px 24px 28px', textAlign: 'center' }}>
-        <p style={{ fontSize: 13, color: '#888', lineHeight: 1.7, maxWidth: 400, margin: '0 auto 28px' }}>Teen fashion that&apos;s affordable, sustainable, and curated by someone who gets your style.</p>
+        <p style={{ fontSize: 26, color: '#888', lineHeight: 1.7, maxWidth: 600, margin: '0 auto 28px' }}>Teen fashion that&apos;s affordable, sustainable, and curated by someone who gets your style.</p>
         <div className="fg" style={{ maxWidth: 800, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 36, marginBottom: 36 }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Shop</div>
-            {['New Arrivals', 'Bestsellers', 'Trending', 'All Items'].map(s => <div key={s} className="fl" onClick={() => goShop('all', s === 'All Items' ? 'all' : s === 'New Arrivals' ? 'new' : s.toLowerCase())} style={{ fontSize: 13, color: '#888', marginBottom: 9, cursor: 'pointer' }}>{s}</div>)}
+            <div style={{ fontSize: 22, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Shop</div>
+            {['New Arrivals', 'Bestsellers', 'Trending', 'All Items'].map(s => <div key={s} className="fl" onClick={() => goShop('all', s === 'All Items' ? 'all' : s === 'New Arrivals' ? 'new' : s.toLowerCase())} style={{ fontSize: 26, color: '#888', marginBottom: 12, cursor: 'pointer' }}>{s}</div>)}
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Info</div>
-            {['About', 'Shipping', 'Size Guide', 'Contact'].map(s => <div key={s} className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, cursor: 'pointer' }}>{s}</div>)}
-            <a href="/track" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Track Order</a>
+            <div style={{ fontSize: 22, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Info</div>
+            {['About', 'Shipping', 'Size Guide', 'Contact'].map(s => <div key={s} className="fl" style={{ fontSize: 26, color: '#888', marginBottom: 12, cursor: 'pointer' }}>{s}</div>)}
+            <a href="/track" className="fl" style={{ fontSize: 26, color: '#888', marginBottom: 12, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Track Order</a>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Follow</div>
-            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>TikTok</a>
-            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>YouTube</a>
+            <div style={{ fontSize: 22, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Follow</div>
+            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 26, color: '#888', marginBottom: 12, display: 'block', textDecoration: 'none' }}>TikTok</a>
+            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 26, color: '#888', marginBottom: 12, display: 'block', textDecoration: 'none' }}>YouTube</a>
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginBottom: 24 }}>
           <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.TikTok /></a>
           <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.YouTube /></a>
         </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20 }}><div style={{ fontSize: 11, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20 }}><div style={{ fontSize: 22, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
       </footer>
     </div>
     </PayPalScriptProvider>
