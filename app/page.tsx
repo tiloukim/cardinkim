@@ -519,10 +519,13 @@ export default function Home() {
                 <button onClick={() => goShop('all', 'all')} className="bd" style={btn(C.dark, '#fff', { fontSize: 15 })}>Browse All</button>
               </div>
             </div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <div style={{ position: 'relative' }}>
-              <img className="hero-img" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&h=875&fit=crop" alt="New Arrivals" style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: 20, display: 'block' }} />
-              <div style={{ position: 'absolute', bottom: 18, left: 18, background: 'rgba(255,255,255,.92)', backdropFilter: 'blur(8px)', padding: '8px 16px', borderRadius: 12, fontSize: 10, fontWeight: 800, letterSpacing: '1.5px', color: C.dark }}>NEW ARRIVALS</div>
+            <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', aspectRatio: '9/16', maxHeight: 580 }}>
+              <iframe
+                src="https://www.tiktok.com/embed/v2/7610933568897944863"
+                style={{ width: '100%', height: '100%', border: 'none' }}
+                allow="accelerometer; autoplay; encrypted-media; gyroscope"
+                allowFullScreen
+              />
             </div>
           </div>
         </section>
