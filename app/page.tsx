@@ -516,7 +516,7 @@ export default function Home() {
               <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <button onClick={() => goShop('all', 'new')} className="bp" style={btn(C.accent, C.dark, { fontSize: 15 })}>Shop New Arrivals</button>
-                <button onClick={() => goShop('all', 'all')} className="bd" style={btn(C.dark, '#fff', { fontSize: 15 })}>Browse All</button>
+                <button onClick={() => goShop('all', 'all')} className="bp" style={btn(C.accent, C.dark, { fontSize: 15 })}>Browse All</button>
               </div>
             </div>
             <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', aspectRatio: '9/16', maxHeight: 580 }}>
@@ -569,7 +569,7 @@ export default function Home() {
           <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, letterSpacing: '1px', fontFamily: F.head }}>NEW ARRIVALS JUST DROPPED</div>
             <div style={{ fontSize: 13, color: 'rgba(0,0,0,.55)', fontWeight: 600 }}>Free shipping on orders $50+</div>
-            <button onClick={() => goShop('all', 'new')} style={{ marginTop: 6, background: C.dark, color: '#fff', border: 'none', borderRadius: 50, padding: '9px 24px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: F.body }}>Shop Now &rarr;</button>
+            <button onClick={() => goShop('all', 'new')} style={{ marginTop: 6, background: '#fff', color: C.dark, border: 'none', borderRadius: 50, padding: '9px 24px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: F.body }}>Shop Now &rarr;</button>
           </div>
         </section>
 
@@ -590,8 +590,8 @@ export default function Home() {
           <div className="social-grid" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
             <div>
               <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
-                <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
-                <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FF0000', color: '#fff', padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
+                <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.accent, color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
+                <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.accent, color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
               </div>
               <h3 style={{ fontFamily: F.head, fontSize: 26, fontWeight: 900, marginBottom: 10 }}>As Seen on My Socials</h3>
               <p style={{ fontSize: 14, color: '#aaa', lineHeight: 1.7 }}>Every item is something I&apos;d wear myself. Follow for styling tips, hauls, and outfit inspo!</p>
@@ -718,8 +718,8 @@ export default function Home() {
         </div>}
         <p style={{ fontSize: 14, color: '#888', marginBottom: 28 }}>Your PayPal receipt is your confirmation. Follow me for styling tips with your new pieces!</p>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 28 }}>
-          <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: C.dark, color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
-          <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#FF0000', color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
+          <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: C.accent, color: C.dark, padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
+          <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: C.accent, color: C.dark, padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
         </div>
         <button onClick={() => setView('home')} className="bp" style={btn(C.accent, C.dark, { fontSize: 15 })}>Continue Shopping</button>
       </section>}
