@@ -128,6 +128,7 @@ export default function Home() {
   const [col, setCol] = useState('all')
   const [search, setSearch] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
+  const [sort, setSort] = useState('default')
   const [cartOpen, setCartOpen] = useState(false)
   const [mobMenu, setMobMenu] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
@@ -207,8 +208,9 @@ export default function Home() {
   const updQ = (k: string, d: number) => setCart(p => p.map(i => i.key === k ? { ...i, qty: Math.max(0, i.qty + d) } : i).filter(i => i.qty > 0))
   const rmC = (k: string) => setCart(p => p.filter(i => i.key !== k))
   const openP = (p: Product) => { setSelProd(p); setSelColor(0); setSelSize(null); setView('product'); window.scrollTo(0, 0) }
-  const goShop = (c?: string, co?: string) => { setView('shop'); if (c) setCat(c); if (co) setCol(co); window.scrollTo(0, 0) }
+  const goShop = (c?: string, co?: string) => { setView('shop'); if (c) setCat(c); if (co) setCol(co); setSort('default'); window.scrollTo(0, 0) }
   const filt = products.filter(p => (cat === 'all' || p.cat === cat) && (col === 'all' || p.col === col) && (!search || p.title.toLowerCase().includes(search.toLowerCase())))
+  const sorted = sort === 'price-asc' ? [...filt].sort((a, b) => a.price - b.price) : sort === 'price-desc' ? [...filt].sort((a, b) => b.price - a.price) : sort === 'newest' ? [...filt].sort((a, b) => Number(b.id) - Number(a.id)) : filt
 
 
   // Sell images
@@ -497,32 +499,129 @@ export default function Home() {
 
       {/* HOME */}
       {view === 'home' && <>
-        <section style={{ background: 'linear-gradient(170deg,#FFF5F3 0%,#FAF9F6 40%,#F3F0FF 80%,#FFF5F3 100%)', padding: '55px 24px 65px', position: 'relative', overflow: 'hidden' }}>
+        {/* HERO — split layout */}
+        <section style={{ background: 'linear-gradient(170deg, #FFF5F3, #FAF9F6)', padding: '45px 24px 55px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: 'rgba(232,69,60,.06)', filter: 'blur(60px)' }} />
-          <div style={{ maxWidth: 1280, margin: '0 auto', animation: 'fu .6s ease' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.dark, color: '#fff', padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', marginBottom: 18 }}><IC.TikTok /> 101K+ FOLLOWERS</div>
-            <h1 style={{ fontFamily: F.head, fontSize: 'clamp(36px,5.5vw,60px)', fontWeight: 900, lineHeight: 1.05, color: C.dark, marginBottom: 18 }}>Teen Fashion<br />That&apos;s <span style={{ color: C.accent, fontStyle: 'italic' }}>Actually</span><br />Affordable</h1>
-            <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <button onClick={() => goShop('all', 'new')} className="bp" style={btn(C.accent, '#fff', { fontSize: 15 })}>Shop New Arrivals</button>
-              <button onClick={() => goShop('all', 'all')} className="bd" style={btn(C.dark, '#fff', { fontSize: 15 })}>Browse All</button>
+          <div className="hg" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center', animation: 'fu .6s ease' }}>
+            <div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.dark, color: '#fff', padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', marginBottom: 18 }}><IC.TikTok /> 101K+ FOLLOWERS</div>
+              <h1 style={{ fontFamily: F.head, fontSize: 'clamp(32px,4.5vw,50px)', fontWeight: 900, lineHeight: 1.08, color: C.dark, marginBottom: 18 }}>Teen Fashion<br />That&apos;s <span style={{ color: C.accent, fontStyle: 'italic' }}>Actually</span><br />Affordable</h1>
+              <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <button onClick={() => goShop('all', 'new')} className="bp" style={btn(C.accent, '#fff', { fontSize: 15 })}>Shop New Arrivals</button>
+                <button onClick={() => goShop('all', 'all')} className="bd" style={btn(C.dark, '#fff', { fontSize: 15 })}>Browse All</button>
+              </div>
+            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <div style={{ position: 'relative' }}>
+              <img className="hero-img" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&h=875&fit=crop" alt="New Arrivals" style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: 20, display: 'block' }} />
+              <div style={{ position: 'absolute', bottom: 18, left: 18, background: 'rgba(255,255,255,.92)', backdropFilter: 'blur(8px)', padding: '8px 16px', borderRadius: 12, fontSize: 10, fontWeight: 800, letterSpacing: '1.5px', color: C.dark }}>NEW ARRIVALS</div>
             </div>
           </div>
         </section>
-        <section style={{ background: '#fff', borderBottom: '1px solid #eee' }}><div className="pg" style={{ maxWidth: 1280, margin: '0 auto', padding: '24px', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18 }}>{[{ i: <IC.Truck />, t: 'Free Shipping $50+', s: 'Fast delivery' }, { i: <IC.Shield />, t: 'Buyer Protection', s: 'Authentic guaranteed' }, { i: <IC.Refresh />, t: 'Easy Returns', s: '14-day returns' }].map(({ i, t, s }) => <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div style={{ color: C.accent }}>{i}</div><div><div style={{ fontSize: 12, fontWeight: 700 }}>{t}</div><div style={{ fontSize: 11, color: '#999' }}>{s}</div></div></div>)}</div></section>
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}><div><h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900 }}>Trending Now</h2></div><button onClick={() => goShop('all', 'trend')} style={{ fontSize: 12, fontWeight: 700, color: C.accent, background: 'none', border: 'none', cursor: 'pointer' }}>View All &rarr;</button></div><div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{products.filter(p => p.col === 'trend' || p.col === 'best').slice(0, 4).map((p, i) => <Card key={p.id} p={p} i={i} />)}</div></section>
-        <section style={{ background: C.dark, color: '#fff', padding: '45px 24px', textAlign: 'center' }}><div style={{ maxWidth: 550, margin: '0 auto' }}><div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 18 }}><a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a><a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FF0000', color: '#fff', padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a></div><h3 style={{ fontFamily: F.head, fontSize: 26, fontWeight: 900, marginBottom: 10 }}>As Seen on My Socials</h3><p style={{ fontSize: 14, color: '#aaa', lineHeight: 1.7 }}>Every item is something I&apos;d wear myself. Follow for styling tips, hauls, and outfit inspo!</p></div></section>
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px 55px' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}><h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900 }}>Just Dropped</h2><button onClick={() => goShop('all', 'new')} style={{ fontSize: 12, fontWeight: 700, color: C.accent, background: 'none', border: 'none', cursor: 'pointer' }}>View All &rarr;</button></div><div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{products.filter(p => p.col === 'new').slice(0, 4).map((p, i) => <Card key={p.id} p={p} i={i} />)}</div></section>
+
+        {/* TRUST BADGES */}
+        <section style={{ background: '#fff' }}>
+          <div className="pg" style={{ maxWidth: 1280, margin: '0 auto', padding: '24px', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18 }}>
+            {[{ i: <IC.Truck />, t: 'Free Shipping $50+', s: 'Fast delivery' }, { i: <IC.Shield />, t: 'Buyer Protection', s: 'Authentic guaranteed' }, { i: <IC.Refresh />, t: 'Easy Returns', s: '14-day returns' }].map(({ i, t, s }) => <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0' }}><div style={{ color: C.accent }}>{i}</div><div><div style={{ fontSize: 12, fontWeight: 700 }}>{t}</div><div style={{ fontSize: 11, color: '#999' }}>{s}</div></div></div>)}
+          </div>
+        </section>
+
+        {/* SHOP BY CATEGORY — visual tiles */}
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px' }}>
+          <h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900, marginBottom: 24 }}>Shop by Category</h2>
+          <div className="cat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+            {[
+              { k: 'tops', l: 'Tops', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&h=340&fit=crop' },
+              { k: 'bottoms', l: 'Bottoms', img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&h=340&fit=crop' },
+              { k: 'dresses', l: 'Dresses', img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&h=340&fit=crop' },
+              { k: 'outerwear', l: 'Outerwear', img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&h=340&fit=crop' },
+              { k: 'shoes', l: 'Shoes', img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&h=340&fit=crop' },
+              { k: 'accessories', l: 'Accessories', img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=340&fit=crop' },
+            ].map(c => (
+              <div key={c.k} className="cat-tile" onClick={() => goShop(c.k, 'all')} style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', aspectRatio: '3/2' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img className="cat-img" src={c.img} alt={c.l} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.1))' }} />
+                <div style={{ position: 'absolute', bottom: 16, left: 16, color: '#fff' }}>
+                  <div style={{ fontSize: 18, fontWeight: 800, fontFamily: F.head }}>{c.l}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,.75)', fontWeight: 600 }}>{products.filter(p => p.cat === c.k).length} items</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* PROMOTIONAL BANNER */}
+        <section style={{ background: C.accent, padding: '28px 24px', textAlign: 'center' }}>
+          <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '1px', fontFamily: F.head }}>NEW ARRIVALS JUST DROPPED</div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,.85)', fontWeight: 600 }}>Free shipping on orders $50+</div>
+            <button onClick={() => goShop('all', 'new')} style={{ marginTop: 6, background: '#fff', color: C.accent, border: 'none', borderRadius: 50, padding: '9px 24px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: F.body }}>Shop Now &rarr;</button>
+          </div>
+        </section>
+
+        {/* TRENDING NOW */}
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 4, height: 28, background: C.accent, borderRadius: 2 }} />
+              <h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900 }}>Trending Now</h2>
+            </div>
+            <button onClick={() => goShop('all', 'trend')} style={{ fontSize: 12, fontWeight: 700, color: C.accent, background: 'none', border: 'none', cursor: 'pointer' }}>View All &rarr;</button>
+          </div>
+          <div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{products.filter(p => p.col === 'trend' || p.col === 'best').slice(0, 4).map((p, i) => <Card key={p.id} p={p} i={i} />)}</div>
+        </section>
+
+        {/* SOCIAL / INFLUENCER */}
+        <section style={{ background: C.dark, color: '#fff', padding: '50px 24px' }}>
+          <div className="social-grid" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
+            <div>
+              <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
+                <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
+                <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FF0000', color: '#fff', padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
+              </div>
+              <h3 style={{ fontFamily: F.head, fontSize: 26, fontWeight: 900, marginBottom: 10 }}>As Seen on My Socials</h3>
+              <p style={{ fontSize: 14, color: '#aaa', lineHeight: 1.7 }}>Every item is something I&apos;d wear myself. Follow for styling tips, hauls, and outfit inspo!</p>
+            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <div className="social-picks" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {products.slice(0, 4).map(p => <img key={p.id} src={p.img} alt={p.title} style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', borderRadius: 14 }} />)}
+            </div>
+          </div>
+        </section>
+
+        {/* JUST DROPPED */}
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px 55px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 4, height: 28, background: C.accent, borderRadius: 2 }} />
+              <h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900 }}>Just Dropped</h2>
+            </div>
+            <button onClick={() => goShop('all', 'new')} style={{ fontSize: 12, fontWeight: 700, color: C.accent, background: 'none', border: 'none', cursor: 'pointer' }}>View All &rarr;</button>
+          </div>
+          <div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{products.filter(p => p.col === 'new').slice(0, 4).map((p, i) => <Card key={p.id} p={p} i={i} />)}</div>
+        </section>
       </>}
 
       {/* SHOP */}
       {view === 'shop' && <section style={{ maxWidth: 1280, margin: '0 auto', padding: '28px 24px 70px' }}>
-        <h1 style={{ fontFamily: F.head, fontSize: 30, fontWeight: 900, marginBottom: 6 }}>{COLS_NAV.find(c => c.k === col)?.l || 'Shop'}</h1>
-        <p style={{ fontSize: 13, color: '#888', marginBottom: 22 }}>{filt.length} items</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 22 }}>
+          <div>
+            <h1 style={{ fontFamily: F.head, fontSize: 30, fontWeight: 900, marginBottom: 6 }}>{COLS_NAV.find(c => c.k === col)?.l || 'Shop'}</h1>
+            <p style={{ fontSize: 13, color: '#888' }}>{filt.length} items</p>
+          </div>
+          <select value={sort} onChange={e => setSort(e.target.value)} style={{ padding: '8px 14px', border: '1.5px solid #ddd', borderRadius: 10, fontSize: 12, fontWeight: 600, fontFamily: F.body, background: '#fff', cursor: 'pointer', color: '#555' }}>
+            <option value="default">Featured</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', marginBottom: 24, paddingBottom: 4 }}>{CATS.map(c => <button key={c.k} className="cp" onClick={() => setCat(c.k)} style={{ padding: '7px 18px', borderRadius: 50, whiteSpace: 'nowrap', background: cat === c.k ? C.dark : '#fff', color: cat === c.k ? '#fff' : '#555', border: cat === c.k ? 'none' : '1.5px solid #ddd', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: F.body }}>{c.l}</button>)}</div>
         <div style={{ display: 'flex', gap: 22, marginBottom: 24, borderBottom: '1px solid #eee', paddingBottom: 10 }}>{COLS_NAV.map(co => <span key={co.k} onClick={() => setCol(co.k)} style={{ fontSize: 12, fontWeight: col === co.k ? 700 : 500, color: col === co.k ? C.dark : '#999', borderBottom: col === co.k ? `2px solid ${C.accent}` : '2px solid transparent', paddingBottom: 8, cursor: 'pointer' }}>{co.l}</span>)}</div>
-        {filt.length === 0 ? <div style={{ textAlign: 'center', padding: '70px 20px', color: '#999' }}><div style={{ fontSize: 44 }}>&#128269;</div><div style={{ fontSize: 16, fontWeight: 600, marginTop: 10 }}>No items found</div></div> :
-          <div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{filt.map((p, i) => <Card key={p.id} p={p} i={i} />)}</div>}
+        {sorted.length === 0 ? <div style={{ textAlign: 'center', padding: '70px 20px', color: '#999' }}><div style={{ fontSize: 44 }}>&#128269;</div><div style={{ fontSize: 16, fontWeight: 600, marginTop: 10 }}>No items found</div></div> :
+          <div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{sorted.map((p, i) => <Card key={p.id} p={p} i={i} />)}</div>}
       </section>}
 
       {/* PRODUCT DETAIL */}
