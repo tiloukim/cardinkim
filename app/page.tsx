@@ -611,24 +611,6 @@ export default function Home() {
           <div className="gp" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>{products.filter(p => p.col === 'trend' || p.col === 'best').slice(0, 4).map((p, i) => <Card key={p.id} p={p} i={i} />)}</div>
         </section>
 
-        {/* SOCIAL / INFLUENCER */}
-        <section style={{ background: C.dark, color: '#fff', padding: '50px 24px' }}>
-          <div className="social-grid" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
-            <div>
-              <div style={{ display: 'flex', gap: 12, marginBottom: 18, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.accent, color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
-                <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.accent, color: C.dark, padding: '10px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
-              </div>
-              <h3 style={{ fontFamily: F.head, fontSize: 26, fontWeight: 900, marginBottom: 10 }}>As Seen on My Socials</h3>
-              <p style={{ fontSize: 14, color: '#aaa', lineHeight: 1.7 }}>Every item is something I&apos;d wear myself. Follow for styling tips, hauls, and outfit inspo!</p>
-            </div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <div className="social-picks" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              {products.slice(0, 4).map(p => <img key={p.id} src={p.img} alt={p.title} style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', borderRadius: 14 }} />)}
-            </div>
-          </div>
-        </section>
-
         {/* JUST DROPPED */}
         <section style={{ maxWidth: 1280, margin: '0 auto', padding: '45px 24px 55px' }}>
           <div className="sec-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>

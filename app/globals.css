@@ -82,9 +82,7 @@ input:focus, select:focus, textarea:focus {
   .hg > div:last-child { max-width: 340px; margin: 0 auto; }
   .pg { grid-template-columns: 1fr !important; justify-items: center; text-align: center; }
   .cat-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .social-grid { grid-template-columns: 1fr !important; text-align: center; }
-  .social-grid > div { display: flex; flex-direction: column; align-items: center; }
-  .social-picks { display: none !important; }
+
   .hero-img { aspect-ratio: 16/9 !important; }
   .fg { grid-template-columns: 1fr !important; text-align: center; }
   .sec-head { flex-direction: column; align-items: center !important; gap: 10px; }
