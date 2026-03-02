@@ -748,17 +748,9 @@ export default function Home() {
       </button>}
 
       {/* FOOTER */}
-      <footer style={{ background: C.dark, color: '#fff', padding: '50px 24px 28px' }}>
-        <div className="fg" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 36, marginBottom: 36 }}>
-          <div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Cardin Kim Closet" style={{ height: 128, marginBottom: 12 }} />
-            <p style={{ fontSize: 13, color: '#888', lineHeight: 1.7, maxWidth: 280 }}>Teen fashion that&apos;s affordable, sustainable, and curated by someone who gets your style.</p>
-            <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>
-              <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.TikTok /></a>
-              <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.YouTube /></a>
-            </div>
-          </div>
+      <footer style={{ background: C.dark, color: '#fff', padding: '50px 24px 28px', textAlign: 'center' }}>
+        <p style={{ fontSize: 13, color: '#888', lineHeight: 1.7, maxWidth: 400, margin: '0 auto 28px' }}>Teen fashion that&apos;s affordable, sustainable, and curated by someone who gets your style.</p>
+        <div className="fg" style={{ maxWidth: 800, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 36, marginBottom: 36 }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Shop</div>
             {['New Arrivals', 'Bestsellers', 'Trending', 'All Items'].map(s => <div key={s} className="fl" onClick={() => goShop('all', s === 'All Items' ? 'all' : s === 'New Arrivals' ? 'new' : s.toLowerCase())} style={{ fontSize: 13, color: '#888', marginBottom: 9, cursor: 'pointer' }}>{s}</div>)}
@@ -774,7 +766,11 @@ export default function Home() {
             <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="fl" style={{ fontSize: 13, color: '#888', marginBottom: 9, display: 'block', textDecoration: 'none' }}>YouTube</a>
           </div>
         </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20, textAlign: 'center' }}><div style={{ fontSize: 11, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginBottom: 24 }}>
+          <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.TikTok /></a>
+          <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si" style={{ color: '#888', display: 'flex' }}><IC.YouTube /></a>
+        </div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20 }}><div style={{ fontSize: 11, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
       </footer>
     </div>
     </PayPalScriptProvider>
