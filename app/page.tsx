@@ -748,7 +748,8 @@ export default function Home() {
           <div>
             <div style={{ fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Info</div>
             <a href="/about" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>About</a>
-            {['Shipping', 'Size Guide'].map(s => <div key={s} className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer' }}>{s}</div>)}
+            <a href="/shipping" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Shipping</a>
+            <a href="/size-guide" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Size Guide</a>
             <a href="/contact" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Contact</a>
             <a href="/track" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Track Order</a>
           </div>
