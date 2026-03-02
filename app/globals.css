@@ -53,19 +53,19 @@ body {
 }
 
 /* Button hover effects */
-.bp:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(232,69,60,.3); }
+.bp:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(249,168,201,.5); }
 .bd:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.15); }
 .pp:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,48,135,.3); }
 .cp:hover { background: #1a1a1a !important; color: #fff !important; }
-.nl:hover { color: #E8453C !important; }
-.si:hover { transform: translateY(-2px); color: #E8453C !important; }
+.nl:hover { color: #F9A8C9 !important; }
+.si:hover { transform: translateY(-2px); color: #F9A8C9 !important; }
 .fl:hover { color: #fff !important; }
 .bp, .bd, .pp { transition: transform 0.2s, box-shadow 0.2s; }
 
 /* Input focus */
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #E8453C !important;
+  border-color: #F9A8C9 !important;
 }
 
 /* Scrollbar */

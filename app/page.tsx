@@ -185,7 +185,7 @@ export default function Home() {
 
   const notify = (m: string) => { setToast(m); setTimeout(() => setToast(null), 2800) }
   const F = { head: "var(--font-fraunces), 'Fraunces', serif", body: "var(--font-dm-sans), 'DM Sans', sans-serif" }
-  const C = { accent: '#E8453C', dark: '#1a1a1a', bg: '#FAF9F6' }
+  const C = { accent: '#F9A8C9', dark: '#1a1a1a', bg: '#FAF9F6' }
 
   // Cart calculations
   const cartN = cart.reduce((s, i) => s + i.qty, 0)
@@ -426,7 +426,7 @@ export default function Home() {
               <input ref={camRef} type="file" accept="image/*" capture="environment" hidden onChange={handleSellImg} />
               <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={handleSellImg} />
               <div style={{ background: '#F5F4F1', borderRadius: 14, padding: '14px 16px', fontSize: 12, color: '#888', lineHeight: 1.6 }}><strong style={{ color: '#555' }}>Photo tips:</strong><br />- Natural lighting near a window<br />- Show front, back & tags<br />- Flat lay or hang — no wrinkles!</div>
-              <button disabled={sellImgs.length === 0} onClick={() => setSellStep(2)} className="bp" style={btn(sellImgs.length > 0 ? C.accent : '#ddd', '#fff', { width: '100%', marginTop: 18, opacity: sellImgs.length > 0 ? 1 : .5, fontSize: 15 })}>Next — Add Details &rarr;</button>
+              <button disabled={sellImgs.length === 0} onClick={() => setSellStep(2)} className="bp" style={btn(sellImgs.length > 0 ? C.accent : '#ddd', C.dark, { width: '100%', marginTop: 18, opacity: sellImgs.length > 0 ? 1 : .5, fontSize: 15 })}>Next — Add Details &rarr;</button>
             </>}
 
             {/* STEP 2 */}
@@ -449,7 +449,7 @@ export default function Home() {
                 {sellForm.cat === 'bottoms' && <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>{['24', '25', '26', '27', '28', '29', '30', '31', '32'].map(s => <button key={s} onClick={() => toggleSz(s)} style={{ padding: '8px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: 'pointer', background: sellForm.sizes.includes(s) ? C.dark : '#fff', color: sellForm.sizes.includes(s) ? '#fff' : '#555', border: sellForm.sizes.includes(s) ? 'none' : '1.5px solid #ddd', fontFamily: F.body }}>{s}</button>)}</div>}
               </div>
               <div style={{ marginBottom: 16 }}><label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#999', display: 'block', marginBottom: 6 }}>Description</label><textarea value={sellForm.desc} onChange={e => setSellForm({ ...sellForm, desc: e.target.value })} placeholder="Tell buyers about this item..." style={{ width: '100%', padding: '13px 16px', border: '2px solid #eee', borderRadius: 12, fontSize: 14, fontFamily: F.body, minHeight: 80, resize: 'vertical', boxSizing: 'border-box' }} /></div>
-              <button disabled={!sellForm.title || !sellForm.price || sellForm.sizes.length === 0} onClick={() => setSellStep(3)} className="bp" style={btn(sellForm.title && sellForm.price && sellForm.sizes.length > 0 ? C.accent : '#ddd', '#fff', { width: '100%', opacity: sellForm.title && sellForm.price && sellForm.sizes.length > 0 ? 1 : .5, fontSize: 15 })}>Preview Listing &rarr;</button>
+              <button disabled={!sellForm.title || !sellForm.price || sellForm.sizes.length === 0} onClick={() => setSellStep(3)} className="bp" style={btn(sellForm.title && sellForm.price && sellForm.sizes.length > 0 ? C.accent : '#ddd', C.dark, { width: '100%', opacity: sellForm.title && sellForm.price && sellForm.sizes.length > 0 ? 1 : .5, fontSize: 15 })}>Preview Listing &rarr;</button>
             </>}
 
             {/* STEP 3 */}
@@ -472,7 +472,7 @@ export default function Home() {
                   {sellForm.desc && <p style={{ fontSize: 14, color: '#666', lineHeight: 1.6 }}>{sellForm.desc}</p>}
                 </div>
               </div>
-              <button onClick={submitListing} className="bp" style={btn(C.accent, '#fff', { width: '100%', fontSize: 16, padding: '18px 32px' })}>Publish — Go Live!</button>
+              <button onClick={submitListing} className="bp" style={btn(C.accent, C.dark, { width: '100%', fontSize: 16, padding: '18px 32px' })}>Publish — Go Live!</button>
               <button onClick={() => setSellStep(2)} style={{ width: '100%', padding: '12px', background: 'none', border: 'none', color: '#888', fontSize: 13, fontWeight: 600, cursor: 'pointer', marginTop: 8, fontFamily: F.body }}>&larr; Edit Details</button>
             </>}
           </div>
@@ -485,7 +485,7 @@ export default function Home() {
         <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: 'min(400px,90vw)', background: '#fff', display: 'flex', flexDirection: 'column', animation: 'si .3s ease' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 22px', borderBottom: '1px solid #eee' }}><span style={{ fontFamily: F.head, fontSize: 18, fontWeight: 800 }}>Your Bag ({cartN})</span><button onClick={() => setCartOpen(false)} style={{ background: '#f5f5f5', border: 'none', borderRadius: '50%', width: 34, height: 34, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IC.X /></button></div>
           <div style={{ flex: 1, overflow: 'auto', padding: '14px 22px' }}>
-            {cart.length === 0 ? <div style={{ textAlign: 'center', padding: '50px 0', color: '#999' }}><div style={{ fontSize: 44, marginBottom: 10 }}>&#128717;</div><div style={{ fontSize: 15, fontWeight: 600 }}>Your bag is empty</div><button onClick={() => { setCartOpen(false); goShop('all', 'all') }} className="bp" style={btn(C.accent, '#fff', { marginTop: 18 })}>Start Shopping</button></div> :
+            {cart.length === 0 ? <div style={{ textAlign: 'center', padding: '50px 0', color: '#999' }}><div style={{ fontSize: 44, marginBottom: 10 }}>&#128717;</div><div style={{ fontSize: 15, fontWeight: 600 }}>Your bag is empty</div><button onClick={() => { setCartOpen(false); goShop('all', 'all') }} className="bp" style={btn(C.accent, C.dark, { marginTop: 18 })}>Start Shopping</button></div> :
               /* eslint-disable-next-line @next/next/no-img-element */
               cart.map(it => <div key={it.key} style={{ display: 'flex', gap: 12, padding: '14px 0', borderBottom: '1px solid #f5f5f5' }}>
                 <img src={it.img} alt="" style={{ width: 66, height: 82, objectFit: 'cover', borderRadius: 10, background: '#f0ede8' }} onError={e => { (e.target as HTMLImageElement).style.background = '#f0ede8' }} />
@@ -499,7 +499,7 @@ export default function Home() {
             {promoOn && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#059669', marginBottom: 5 }}><span>Discount</span><span>-${disc.toFixed(2)}</span></div>}
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#666', marginBottom: 10 }}><span>Shipping</span><span>{ship === 0 ? 'FREE' : `$${ship.toFixed(2)}`}</span></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 17, fontWeight: 800, marginBottom: 14 }}><span>Total</span><span>${tot.toFixed(2)}</span></div>
-            <button onClick={() => { setCartOpen(false); setView('checkout') }} className="bp" style={btn(C.accent, '#fff', { width: '100%', fontSize: 15 })}>Checkout &middot; ${tot.toFixed(2)}</button>
+            <button onClick={() => { setCartOpen(false); setView('checkout') }} className="bp" style={btn(C.accent, C.dark, { width: '100%', fontSize: 15 })}>Checkout &middot; ${tot.toFixed(2)}</button>
           </div>}
         </div>
       </div>}
@@ -515,7 +515,7 @@ export default function Home() {
               <h1 style={{ fontFamily: F.head, fontSize: 'clamp(32px,4.5vw,50px)', fontWeight: 900, lineHeight: 1.08, color: C.dark, marginBottom: 18 }}>Teen Fashion<br />That&apos;s <span style={{ color: C.accent, fontStyle: 'italic' }}>Actually</span><br />Affordable</h1>
               <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <button onClick={() => goShop('all', 'new')} className="bp" style={btn(C.accent, '#fff', { fontSize: 15 })}>Shop New Arrivals</button>
+                <button onClick={() => goShop('all', 'new')} className="bp" style={btn(C.accent, C.dark, { fontSize: 15 })}>Shop New Arrivals</button>
                 <button onClick={() => goShop('all', 'all')} className="bd" style={btn(C.dark, '#fff', { fontSize: 15 })}>Browse All</button>
               </div>
             </div>
@@ -562,9 +562,9 @@ export default function Home() {
         {/* PROMOTIONAL BANNER */}
         <section style={{ background: C.accent, padding: '28px 24px', textAlign: 'center' }}>
           <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '1px', fontFamily: F.head }}>NEW ARRIVALS JUST DROPPED</div>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,.85)', fontWeight: 600 }}>Free shipping on orders $50+</div>
-            <button onClick={() => goShop('all', 'new')} style={{ marginTop: 6, background: '#fff', color: C.accent, border: 'none', borderRadius: 50, padding: '9px 24px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: F.body }}>Shop Now &rarr;</button>
+            <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, letterSpacing: '1px', fontFamily: F.head }}>NEW ARRIVALS JUST DROPPED</div>
+            <div style={{ fontSize: 13, color: 'rgba(0,0,0,.55)', fontWeight: 600 }}>Free shipping on orders $50+</div>
+            <button onClick={() => goShop('all', 'new')} style={{ marginTop: 6, background: C.dark, color: '#fff', border: 'none', borderRadius: 50, padding: '9px 24px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: F.body }}>Shop Now &rarr;</button>
           </div>
         </section>
 
@@ -647,7 +647,7 @@ export default function Home() {
             {selProd.colors.length > 1 && <div style={{ marginBottom: 22 }}><div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '1px', color: '#888' }}>Color — {selProd.colors[selColor]?.n}</div><div style={{ display: 'flex', gap: 8 }}>{selProd.colors.map((co, i) => <button key={i} onClick={() => setSelColor(i)} style={{ width: 34, height: 34, borderRadius: '50%', background: co.h, border: selColor === i ? `3px solid ${C.dark}` : co.h === '#fff' ? '2px solid #ddd' : '2px solid transparent', cursor: 'pointer', outline: selColor === i ? '2px solid #fff' : 'none', outlineOffset: '-5px' }} />)}</div></div>}
             <div style={{ marginBottom: 24 }}><div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '1px', color: '#888' }}>Size {selSize && `— ${selSize}`}</div><div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>{selProd.sizes.map(s => <button key={s} onClick={() => setSelSize(s)} style={{ padding: '9px 16px', borderRadius: 10, background: selSize === s ? C.dark : '#fff', color: selSize === s ? '#fff' : C.dark, border: selSize === s ? 'none' : '1.5px solid #ddd', fontSize: 12, fontWeight: 700, cursor: 'pointer', minWidth: 44, fontFamily: F.body, transition: 'all .15s' }}>{s}</button>)}</div></div>
             {selProd.stock < 15 && <div style={{ fontSize: 12, color: C.accent, fontWeight: 600, marginBottom: 14 }}>Only {selProd.stock} left</div>}
-            <button onClick={() => addCart(selProd, selProd.colors[selColor]?.n, selSize)} className="bp" style={btn(C.accent, '#fff', { width: '100%', fontSize: 15, padding: '16px' })}>Add to Bag — ${selProd.price.toFixed(2)}</button>
+            <button onClick={() => addCart(selProd, selProd.colors[selColor]?.n, selSize)} className="bp" style={btn(C.accent, C.dark, { width: '100%', fontSize: 15, padding: '16px' })}>Add to Bag — ${selProd.price.toFixed(2)}</button>
           </div>
         </div>
       </section>}
@@ -716,12 +716,12 @@ export default function Home() {
           <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: C.dark, color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.TikTok /> TikTok</a>
           <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#FF0000', color: '#fff', padding: '11px 22px', borderRadius: 50, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><IC.YouTube /> Subscribe</a>
         </div>
-        <button onClick={() => setView('home')} className="bp" style={btn(C.accent, '#fff', { fontSize: 15 })}>Continue Shopping</button>
+        <button onClick={() => setView('home')} className="bp" style={btn(C.accent, C.dark, { fontSize: 15 })}>Continue Shopping</button>
       </section>}
 
       {/* ADMIN FLOATING BUTTON */}
       {isAdmin && <button onClick={() => { setSellOpen(true); setSellStep(1) }}
-        style={{ position: 'fixed', bottom: 24, right: 24, padding: '14px 24px', background: 'linear-gradient(135deg,#E8453C,#FF6B35)', color: '#fff', border: 'none', borderRadius: 50, fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 6px 24px rgba(232,69,60,.4)', zIndex: 80, display: 'flex', alignItems: 'center', gap: 8, fontFamily: F.body }} className="bp">
+        style={{ position: 'fixed', bottom: 24, right: 24, padding: '14px 24px', background: C.accent, color: C.dark, border: 'none', borderRadius: 50, fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 6px 24px rgba(249,168,201,.5)', zIndex: 80, display: 'flex', alignItems: 'center', gap: 8, fontFamily: F.body }} className="bp">
         Add Product
       </button>}
 
