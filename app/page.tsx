@@ -156,7 +156,6 @@ export default function Home() {
   const [checkForm, setCheckForm] = useState({ name: '', email: '', address: '', city: '', state: '', zip: '' })
   const [paypalProcessing, setPaypalProcessing] = useState(false)
   const [lastOrderId, setLastOrderId] = useState<string | null>(null)
-  const [videoMuted, setVideoMuted] = useState(true)
 
   // Persist cart to localStorage
   useEffect(() => {
@@ -192,23 +191,7 @@ export default function Home() {
     if (vid) { vid.src = heroVideos[heroVidIdx.current]; vid.play() }
   }, [heroVideos])
 
-  // Set hero video volume to medium-low and attempt unmute
-  useEffect(() => {
-    const vid = heroVidRef.current
-    if (!vid) return
-    vid.volume = 0.25
-    vid.muted = false
-    const p = vid.play()
-    if (p) p.catch(() => { vid.muted = true; setVideoMuted(true); vid.play() })
-    setVideoMuted(false)
-  }, [])
 
-  const toggleMute = () => {
-    const vid = heroVidRef.current
-    if (!vid) return
-    vid.muted = !vid.muted
-    setVideoMuted(vid.muted)
-  }
 
   // Pre-fill checkout from customer profile
   useEffect(() => {
@@ -573,13 +556,6 @@ export default function Home() {
                 onEnded={onHeroVideoEnded}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
-              <button onClick={toggleMute} style={{ position: 'absolute', bottom: 14, right: 14, width: 36, height: 36, borderRadius: '50%', background: 'rgba(0,0,0,.5)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', zIndex: 2 }}>
-                {videoMuted ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" /></svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07" /></svg>
-                )}
-              </button>
             </div>
           </div>
         </section>
