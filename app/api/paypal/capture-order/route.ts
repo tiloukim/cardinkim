@@ -2,10 +2,20 @@ import { NextResponse } from 'next/server'
 import { capturePayPalOrder } from '@/lib/paypal'
 import { createServiceClient } from '@/lib/supabase/server'
 
+const VALID_US_STATES = new Set(['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC'])
+
 export async function POST(req: Request) {
   try {
     const { paypalOrderId, cart, shipping, promo, totals } = await req.json()
     console.log('[capture] Start:', { paypalOrderId, email: shipping?.email, cartLen: cart?.length, total: totals?.total })
+
+    // Validate required shipping fields and US-only state
+    if (!shipping?.name || !shipping?.email || !shipping?.address || !shipping?.city || !shipping?.state || !shipping?.zip) {
+      return NextResponse.json({ error: 'All shipping fields are required' }, { status: 400 })
+    }
+    if (!VALID_US_STATES.has(shipping.state)) {
+      return NextResponse.json({ error: 'US shipping only — invalid state' }, { status: 400 })
+    }
 
     // Capture payment with PayPal
     const capture = await capturePayPalOrder(paypalOrderId)

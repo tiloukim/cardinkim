@@ -53,6 +53,7 @@ export default function AccountPage() {
   const [editing, setEditing] = useState(false)
   const [profileForm, setProfileForm] = useState({ name: '', phone: '', address: '', city: '', state: '', zip: '' })
   const [saving, setSaving] = useState(false)
+  const [profileError, setProfileError] = useState('')
 
   // Wait for auth — max 2 seconds then show page regardless
   useEffect(() => {
@@ -88,16 +89,22 @@ export default function AccountPage() {
 
   const handleSaveProfile = async () => {
     if (!customer) return
+    const { name, phone, address, city, state, zip } = profileForm
+    if (!name || !phone || !address || !city || !state || !zip) {
+      setProfileError('All fields are required')
+      return
+    }
+    setProfileError('')
     setSaving(true)
     await supabase
       .from('ck_customers')
       .update({
         name: profileForm.name,
-        phone: profileForm.phone || null,
-        address: profileForm.address || null,
-        city: profileForm.city || null,
-        state: profileForm.state || null,
-        zip: profileForm.zip || null,
+        phone: profileForm.phone,
+        address: profileForm.address,
+        city: profileForm.city,
+        state: profileForm.state,
+        zip: profileForm.zip,
       })
       .eq('id', customer.id)
     await refreshCustomer()
@@ -185,11 +192,12 @@ export default function AccountPage() {
                   <input value={profileForm.zip} onChange={e => setProfileForm({ ...profileForm, zip: e.target.value })} className="auth-input" />
                 </div>
               </div>
+              {profileError && <div className="auth-error" style={{ marginTop: 10 }}>{profileError}</div>}
               <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
                 <button onClick={handleSaveProfile} className="auth-btn" disabled={saving} style={{ flex: 1 }}>
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
-                <button onClick={() => setEditing(false)} className="account-cancel-btn">Cancel</button>
+                <button onClick={() => { setEditing(false); setProfileError('') }} className="account-cancel-btn">Cancel</button>
               </div>
             </div>
           ) : (

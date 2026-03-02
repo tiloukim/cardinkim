@@ -4,9 +4,16 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
+const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC']
+
 export default function SignupPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [address, setAddress] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  const [zip, setZip] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
@@ -16,7 +23,10 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name || !email || !password || !confirm) return
+    if (!name || !email || !phone || !address || !city || !state || !zip || !password || !confirm) {
+      setError('All fields are required')
+      return
+    }
     if (password !== confirm) { setError('Passwords don\'t match'); return }
     if (password.length < 6) { setError('Password must be at least 6 characters'); return }
     setLoading(true)
@@ -25,7 +35,7 @@ export default function SignupPage() {
     const { error: err } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: { data: { name, phone, address, city, state, zip } },
     })
 
     if (err) {
@@ -62,28 +72,68 @@ export default function SignupPage() {
             <form onSubmit={handleSignup} className="auth-form">
               <input
                 type="text"
-                placeholder="Full name"
+                placeholder="Full name *"
                 value={name}
                 onChange={e => { setName(e.target.value); setError('') }}
                 className="auth-input"
               />
               <input
                 type="email"
-                placeholder="Email address"
+                placeholder="Email address *"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setError('') }}
                 className="auth-input"
               />
               <input
+                type="tel"
+                placeholder="Phone number *"
+                value={phone}
+                onChange={e => { setPhone(e.target.value); setError('') }}
+                className="auth-input"
+              />
+              <input
+                type="text"
+                placeholder="Street address *"
+                value={address}
+                onChange={e => { setAddress(e.target.value); setError('') }}
+                className="auth-input"
+              />
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 10 }}>
+                <input
+                  type="text"
+                  placeholder="City *"
+                  value={city}
+                  onChange={e => { setCity(e.target.value); setError('') }}
+                  className="auth-input"
+                />
+                <select
+                  value={state}
+                  onChange={e => { setState(e.target.value); setError('') }}
+                  className="auth-input"
+                  style={{ color: state ? undefined : '#999' }}
+                >
+                  <option value="">State *</option>
+                  {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Zip *"
+                  value={zip}
+                  onChange={e => { setZip(e.target.value); setError('') }}
+                  className="auth-input"
+                />
+              </div>
+              <div style={{ fontSize: 11, color: '#999', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5, marginTop: -4 }}>&#127482;&#127480; US shipping only</div>
+              <input
                 type="password"
-                placeholder="Password"
+                placeholder="Password *"
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError('') }}
                 className="auth-input"
               />
               <input
                 type="password"
-                placeholder="Confirm password"
+                placeholder="Confirm password *"
                 value={confirm}
                 onChange={e => { setConfirm(e.target.value); setError('') }}
                 className="auth-input"

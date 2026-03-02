@@ -300,7 +300,7 @@ export default function Home() {
 
   // PayPal checkout — real flow via server API
   const createPayPalOrderHandler = async (): Promise<string> => {
-    if (!checkForm.name || !checkForm.email) { notify('Fill in name & email first'); throw new Error('Missing info') }
+    if (!checkForm.name || !checkForm.email || !checkForm.address || !checkForm.city || !checkForm.state || !checkForm.zip) { notify('Fill in all shipping fields'); throw new Error('Missing info') }
     const res = await fetch('/api/paypal/create-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
