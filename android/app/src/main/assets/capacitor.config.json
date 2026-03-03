@@ -1,0 +1,13 @@
+{
+	"appId": "com.cardinkim.app",
+	"appName": "CardinKim",
+	"webDir": "out",
+	"server": {
+		"url": "https://www.cardinkim.com",
+		"cleartext": false,
+		"allowNavigation": [
+			"cardinkim.com",
+			"*.cardinkim.com"
+		]
+	}
+}

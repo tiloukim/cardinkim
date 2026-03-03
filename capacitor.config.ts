@@ -7,6 +7,7 @@ const config: CapacitorConfig = {
   server: {
     url: "https://www.cardinkim.com",
     cleartext: false,
+    allowNavigation: ["cardinkim.com", "*.cardinkim.com"],
   },
 };
 
