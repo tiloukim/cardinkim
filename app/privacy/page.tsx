@@ -45,7 +45,7 @@ const sections = [
   },
   {
     title: 'Contact Us',
-    text: 'If you have any questions about this privacy policy or our data practices, please reach out through our Contact page or email us at support@cardinkim.com.',
+    text: 'If you have any questions about this privacy policy or our data practices, please reach out through our Contact page or email us at contact@cardinkim.com.',
   },
 ]
 
