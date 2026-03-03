@@ -209,7 +209,7 @@ export default function Home() {
 
   const notify = (m: string) => { setToast(m); setTimeout(() => setToast(null), 2800) }
   const F = { head: "var(--font-fraunces), 'Fraunces', serif", body: "var(--font-dm-sans), 'DM Sans', sans-serif" }
-  const C = { accent: '#F9A8C9', nav: '#00B2FF', dark: '#1a1a1a', bg: '#FAF9F6' }
+  const C = { accent: '#F9A8C9', nav: '#c1d0b5', dark: '#1a1a1a', bg: '#FAF9F6' }
 
   // Cart calculations
   const cartN = cart.reduce((s, i) => s + i.qty, 0)
@@ -367,7 +367,7 @@ export default function Home() {
       {toast && <div style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: C.dark, color: '#fff', padding: '11px 26px', borderRadius: 50, fontSize: 13, fontWeight: 600, boxShadow: '0 8px 28px rgba(0,0,0,.2)', animation: 'sd .3s ease' }}>{toast}</div>}
 
       {/* ANNOUNCEMENT */}
-      {annBar && <div style={{ background: '#00B2FF', color: '#fff', textAlign: 'center', padding: '9px 40px', fontSize: 11, fontWeight: 600, letterSpacing: '.5px', position: 'relative' }}>FREE SHIPPING $50+ &middot; CODE <span style={{ color: '#fff', fontWeight: 800 }}>CARDIN10</span> = 10% OFF<button onClick={() => setAnnBar(false)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,.6)', cursor: 'pointer', fontSize: 16 }}>&times;</button></div>}
+      {annBar && <div style={{ background: '#c1d0b5', color: '#fff', textAlign: 'center', padding: '9px 40px', fontSize: 11, fontWeight: 600, letterSpacing: '.5px', position: 'relative' }}>FREE SHIPPING $50+ &middot; CODE <span style={{ color: '#fff', fontWeight: 800 }}>CARDIN10</span> = 10% OFF<button onClick={() => setAnnBar(false)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,.6)', cursor: 'pointer', fontSize: 16 }}>&times;</button></div>}
 
       {/* HEADER */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, background: '#fff', borderBottom: '1px solid #e5e5e5' }}>
@@ -536,8 +536,8 @@ export default function Home() {
           <div className="hg" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center', animation: 'fu .6s ease' }}>
             <div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 18, justifyContent: 'center', position: 'relative', zIndex: 5 }}>
-                <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.nav, color: '#fff', padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', textDecoration: 'none' }}><IC.TikTok /> {followers}+ FOLLOWERS</a>
-                <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.nav, color: '#fff', padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', textDecoration: 'none' }}><IC.YouTube /> {ytSubs}+ SUBSCRIBERS</a>
+                <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', textDecoration: 'none' }}><IC.TikTok /> {followers}+ FOLLOWERS</a>
+                <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, color: C.dark, padding: '6px 16px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '1px', textDecoration: 'none' }}><IC.YouTube /> {ytSubs}+ SUBSCRIBERS</a>
               </div>
               <h1 style={{ fontFamily: F.head, fontSize: 'clamp(32px,4.5vw,50px)', fontWeight: 900, lineHeight: 1.08, color: C.dark, marginBottom: 18 }}>Teen Fashion<br />That&apos;s <span style={{ color: C.accent, fontStyle: 'italic' }}>Actually</span><br />Affordable</h1>
               <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginBottom: 30, maxWidth: 440 }}>New, used & open-box clothing curated by Cardin Kim. The styles you see on TikTok — at prices that won&apos;t break the bank.</p>
