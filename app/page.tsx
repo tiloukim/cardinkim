@@ -754,6 +754,7 @@ export default function Home() {
             <a href="/size-guide" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Size Guide</a>
             <a href="/contact" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Contact</a>
             <a href="/track" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Track Order</a>
+            <a href="/privacy" className="fl" style={{ fontSize: 17, color: '#888', marginBottom: 10, cursor: 'pointer', display: 'block', textDecoration: 'none' }}>Privacy Policy</a>
           </div>
           <div>
             <div style={{ fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#666', marginBottom: 14 }}>Follow</div>
