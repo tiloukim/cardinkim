@@ -376,7 +376,7 @@ export default function Home() {
           {/* Left: hamburger (mobile) + search (desktop) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <button className="ms" style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: C.nav }} onClick={() => setMobMenu(true)}><IC.Menu /></button>
-            <button className="do" onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.nav, display: 'flex' }}><IC.Search /></button>
+            <button className="do" onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.accent, display: 'flex' }}><IC.Search /></button>
           </div>
           {/* Center: logo */}
           <div onClick={() => { setView('home'); setSearchOpen(false) }} style={{ cursor: 'pointer', textAlign: 'center' }}>
