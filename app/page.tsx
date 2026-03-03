@@ -138,7 +138,7 @@ export default function Home() {
   const [followers, setFollowers] = useState('101K')
   const [ytSubs, setYtSubs] = useState('1K')
   const heroVidRef = useRef<HTMLVideoElement>(null)
-  const heroVideos = ['/tiktok-video.mp4', '/tiktok-video2.mp4']
+  const heroVideos = ['/tiktok-video2.mp4', '/tiktok-video.mp4']
   const heroVidIdx = useRef(0)
 
   // Admin — derived from auth
@@ -549,7 +549,7 @@ export default function Home() {
             <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', aspectRatio: '9/16', maxHeight: 580 }}>
               <video
                 ref={heroVidRef}
-                src="/tiktok-video.mp4"
+                src="/tiktok-video2.mp4"
                 autoPlay
                 muted
                 playsInline
