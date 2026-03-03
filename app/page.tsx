@@ -736,7 +736,7 @@ export default function Home() {
 
       {/* ADMIN FLOATING BUTTON */}
       {isAdmin && <button onClick={() => { setSellOpen(true); setSellStep(1) }}
-        style={{ position: 'fixed', bottom: 24, right: 24, padding: '14px 24px', background: C.accent, color: C.dark, border: 'none', borderRadius: 50, fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 6px 24px rgba(249,168,201,.5)', zIndex: 80, display: 'flex', alignItems: 'center', gap: 8, fontFamily: F.body }} className="bp">
+        style={{ position: 'fixed', bottom: 24, right: 24, padding: '14px 24px', background: '#c1d0b5', color: C.dark, border: 'none', borderRadius: 50, fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 6px 24px rgba(193,208,181,.5)', zIndex: 80, display: 'flex', alignItems: 'center', gap: 8, fontFamily: F.body }} className="bp">
         Add Product
       </button>}
 
