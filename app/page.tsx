@@ -385,10 +385,10 @@ export default function Home() {
           </div>
           {/* Right: icons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, justifyContent: 'flex-end' }}>
-            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.nav, display: 'flex' }}><IC.TikTok /></a>
-            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.nav, display: 'flex' }}><IC.YouTube /></a>
-            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.nav, textDecoration: 'none', fontSize: 24, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
-            <div onClick={() => setCartOpen(true)} style={{ cursor: 'pointer', color: C.nav }}><IC.Cart n={cartN} /></div>
+            <a href="https://www.tiktok.com/@cardinkiim" target="_blank" rel="noreferrer" className="si do" style={{ color: C.accent, display: 'flex' }}><IC.TikTok /></a>
+            <a href="https://www.youtube.com/channel/UCeqF5g_mOasvyYdiKHxe1HQ" target="_blank" rel="noreferrer" className="si do" style={{ color: C.accent, display: 'flex' }}><IC.YouTube /></a>
+            <a href={user ? '/account' : '/login'} className="nl" style={{ display: 'flex', alignItems: 'center', gap: 5, color: C.accent, textDecoration: 'none', fontSize: 24, fontWeight: 600 }}><IC.User /><span className="do">{user ? 'Account' : 'Sign In'}</span></a>
+            <div onClick={() => setCartOpen(true)} style={{ cursor: 'pointer', color: C.accent }}><IC.Cart n={cartN} /></div>
           </div>
         </div>
         {/* Nav row: centered links */}
