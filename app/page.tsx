@@ -42,20 +42,7 @@ interface CartItem {
   img: string
 }
 
-const INIT_PRODUCTS: Product[] = [
-  { id: '1', title: 'Butterfly Mesh Top', price: 24.99, compare: 39.99, cat: 'tops', col: 'new', colors: [{ n: 'Lilac', h: '#C8A2C8' }, { n: 'Pink', h: '#F4C2C2' }, { n: 'Black', h: '#1a1a1a' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=600&h=750&fit=crop', desc: 'Dreamy butterfly mesh overlay. Layer over a cami for the perfect going-out look.', cond: 'New', badge: 'NEW', stock: 12 },
-  { id: '2', title: 'Vintage Wide Leg Jeans', price: 48.99, compare: 72, cat: 'bottoms', col: 'best', colors: [{ n: 'Light Wash', h: '#A4C8E1' }, { n: 'Dark Indigo', h: '#2C3E6B' }], sizes: ['24', '25', '26', '27', '28', '29', '30'], img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&h=750&fit=crop', desc: 'High-waisted wide leg jeans with authentic vintage-inspired wash. Everyone\'s obsessed.', cond: 'Like New', badge: 'BEST', stock: 8 },
-  { id: '3', title: 'Oversized Linen Blazer', price: 59.99, compare: 89.99, cat: 'outerwear', col: 'new', colors: [{ n: 'Oat', h: '#D4C5A9' }, { n: 'Charcoal', h: '#444' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=750&fit=crop', desc: 'Effortlessly cool oversized blazer. Throw it over anything for instant cool-girl energy.', cond: 'New', badge: 'NEW', stock: 15 },
-  { id: '4', title: 'Platform Canvas Sneakers', price: 54.99, compare: null, cat: 'shoes', col: 'best', colors: [{ n: 'White', h: '#fff' }, { n: 'Black', h: '#1a1a1a' }, { n: 'Sage', h: '#9CAF88' }], sizes: ['6', '6.5', '7', '7.5', '8', '8.5', '9'], img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&h=750&fit=crop', desc: 'Chunky platform sneakers. The 3-inch lift you didn\'t know you needed.', cond: 'New with Tags', badge: null, stock: 22 },
-  { id: '5', title: 'Coquette Bow Mini Skirt', price: 32.99, compare: 45, cat: 'bottoms', col: 'trend', colors: [{ n: 'Ballet Pink', h: '#E8B4B8' }, { n: 'Cream', h: '#FFFDD0' }, { n: 'Black', h: '#1a1a1a' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=750&fit=crop', desc: 'Cutest bow-detail mini with a flirty A-line shape. Coquette era essentials.', cond: 'New', badge: 'TREND', stock: 6 },
-  { id: '6', title: 'Chunky Gold Hoops', price: 18.99, compare: null, cat: 'accessories', col: 'best', colors: [{ n: 'Gold', h: '#D4AF37' }, { n: 'Silver', h: '#C0C0C0' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&h=750&fit=crop', desc: 'Everyday chunky hoops. Hypoallergenic, lightweight, essential.', cond: 'New', badge: null, stock: 45 },
-  { id: '7', title: 'Retro Track Jacket', price: 44.99, compare: 65, cat: 'outerwear', col: 'new', colors: [{ n: 'Red', h: '#CC3333' }, { n: 'Navy', h: '#1B2A4A' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=750&fit=crop', desc: 'Vintage-inspired track jacket with contrast stripes. Y2K throwback.', cond: 'New', badge: 'NEW', stock: 18 },
-  { id: '8', title: 'Floral Wrap Midi Dress', price: 42.99, compare: 64, cat: 'dresses', col: 'trend', colors: [{ n: 'Garden', h: '#E8C4D8' }, { n: 'Blue', h: '#7BA7BC' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&h=750&fit=crop', desc: 'Flowy wrap midi with the prettiest floral print. Perfect for brunch or date night.', cond: 'New', badge: 'TREND', stock: 10 },
-  { id: '9', title: 'Ribbed Crop Tank 3-Pack', price: 28.99, compare: 45, cat: 'tops', col: 'best', colors: [{ n: 'Basics', h: '#555' }, { n: 'Pastels', h: '#DEB5D3' }], sizes: ['XS', 'S', 'M', 'L'], img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&h=750&fit=crop', desc: 'Your everyday staple. Three ribbed crop tanks in one pack.', cond: 'New', badge: 'VALUE', stock: 30 },
-  { id: '10', title: 'Baggy Cargo Pants', price: 46.99, compare: 68, cat: 'bottoms', col: 'new', colors: [{ n: 'Khaki', h: '#C3B091' }, { n: 'Black', h: '#1a1a1a' }, { n: 'Olive', h: '#708238' }], sizes: ['XS', 'S', 'M', 'L', 'XL'], img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=750&fit=crop', desc: 'Low-rise baggy cargo with oversized pockets. Streetwear staple.', cond: 'New', badge: 'NEW', stock: 20 },
-  { id: '11', title: 'Beaded Phone Charm', price: 12.99, compare: null, cat: 'accessories', col: 'trend', colors: [{ n: 'Rainbow', h: '#E8B4B8' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&h=750&fit=crop', desc: 'Adorable beaded phone charm. As seen in my TikTok hauls!', cond: 'New', badge: 'TIKTOK', stock: 50 },
-  { id: '12', title: 'Satin Hair Bow Set', price: 14.99, compare: null, cat: 'accessories', col: 'trend', colors: [{ n: 'Assorted', h: '#E8C4D8' }], sizes: ['One Size'], img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=750&fit=crop', desc: 'Set of 4 oversized satin hair bows in dreamy colors.', cond: 'New', badge: null, stock: 35 },
-]
+const INIT_PRODUCTS: Product[] = []
 
 /* Map DB product row to local shape */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,7 +101,15 @@ const fb = (t: string) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="
 /* ═══ MAIN APP ═══ */
 export default function Home() {
   const { user, customer } = useAuth()
-  const [products, setProducts] = useState<Product[]>(INIT_PRODUCTS)
+  const [products, setProducts] = useState<Product[]>([])
+  const [catImages, setCatImages] = useState<Record<string, string>>({
+    tops: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&h=340&fit=crop',
+    bottoms: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&h=340&fit=crop',
+    dresses: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&h=340&fit=crop',
+    outerwear: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&h=340&fit=crop',
+    shoes: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&h=340&fit=crop',
+    accessories: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=340&fit=crop',
+  })
   const [view, setView] = useState('home')
   const [cart, setCart] = useState<CartItem[]>(() => {
     if (typeof window === 'undefined') return []
@@ -173,6 +168,17 @@ export default function Home() {
     } catch { /* fallback to INIT_PRODUCTS */ }
   }, [])
   useEffect(() => { fetchProducts() }, [fetchProducts])
+
+  // Fetch category images from settings
+  useEffect(() => {
+    fetch('/api/settings').then(r => r.json()).then(data => {
+      const updated: Record<string, string> = {}
+      for (const k of ['tops', 'bottoms', 'dresses', 'outerwear', 'shoes', 'accessories']) {
+        if (data[`cat_img_${k}`]) updated[k] = data[`cat_img_${k}`]
+      }
+      if (Object.keys(updated).length > 0) setCatImages(prev => ({ ...prev, ...updated }))
+    }).catch(() => {})
+  }, [])
 
   // Fetch TikTok follower count
   useEffect(() => {
@@ -572,16 +578,16 @@ export default function Home() {
           <h2 style={{ fontFamily: F.head, fontSize: 28, fontWeight: 900, marginBottom: 24 }}>Shop by Category</h2>
           <div className="cat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
             {[
-              { k: 'tops', l: 'Tops', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&h=340&fit=crop' },
-              { k: 'bottoms', l: 'Bottoms', img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&h=340&fit=crop' },
-              { k: 'dresses', l: 'Dresses', img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&h=340&fit=crop' },
-              { k: 'outerwear', l: 'Outerwear', img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&h=340&fit=crop' },
-              { k: 'shoes', l: 'Shoes', img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&h=340&fit=crop' },
-              { k: 'accessories', l: 'Accessories', img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=340&fit=crop' },
+              { k: 'tops', l: 'Tops' },
+              { k: 'bottoms', l: 'Bottoms' },
+              { k: 'dresses', l: 'Dresses' },
+              { k: 'outerwear', l: 'Outerwear' },
+              { k: 'shoes', l: 'Shoes' },
+              { k: 'accessories', l: 'Accessories' },
             ].map(c => (
               <div key={c.k} className="cat-tile" onClick={() => goShop(c.k, 'all')} style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', aspectRatio: '3/2' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="cat-img" src={c.img} alt={c.l} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <img className="cat-img" src={catImages[c.k]} alt={c.l} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.1))' }} />
                 <div style={{ position: 'absolute', bottom: 16, left: 16, color: '#fff' }}>
                   <div style={{ fontSize: 18, fontWeight: 800, fontFamily: F.head }}>{c.l}</div>
