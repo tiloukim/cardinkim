@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const CATEGORIES = [
   { key: 'tops', label: 'Tops' },
@@ -22,8 +22,10 @@ const DEFAULT_IMAGES: Record<string, string> = {
 
 export default function SettingsPage() {
   const [images, setImages] = useState<Record<string, string>>(DEFAULT_IMAGES)
+  const [uploading, setUploading] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
+  const fileRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
     fetch('/api/settings')
@@ -38,6 +40,25 @@ export default function SettingsPage() {
       })
       .catch(() => {})
   }, [])
+
+  const handleUpload = async (catKey: string, file: File) => {
+    setUploading(catKey)
+    setMessage('')
+    const form = new FormData()
+    form.append('file', file)
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: form })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        setImages(prev => ({ ...prev, [catKey]: data.url }))
+      } else {
+        setMessage(`Upload failed: ${data.error || 'Unknown error'}`)
+      }
+    } catch {
+      setMessage('Upload failed')
+    }
+    setUploading(null)
+  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -72,36 +93,79 @@ export default function SettingsPage() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
-        {CATEGORIES.map(cat => (
-          <div key={cat.key} style={{ border: '1px solid #e5e5e5', borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
-            <div style={{ aspectRatio: '3/2', overflow: 'hidden', background: '#f5f5f5' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={images[cat.key]}
-                alt={cat.label}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
-              />
-            </div>
-            <div style={{ padding: 16 }}>
-              <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 6, display: 'block' }}>{cat.label}</label>
+        {CATEGORIES.map(cat => {
+          const isUploading = uploading === cat.key
+          return (
+            <div key={cat.key} style={{ border: '1px solid #e5e5e5', borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
+              <div
+                style={{ aspectRatio: '3/2', overflow: 'hidden', background: '#f5f5f5', position: 'relative', cursor: 'pointer' }}
+                onClick={() => !isUploading && fileRefs.current[cat.key]?.click()}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={images[cat.key]}
+                  alt={cat.label}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+                {isUploading && (
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(0,0,0,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontSize: 14, fontWeight: 600,
+                  }}>
+                    Uploading...
+                  </div>
+                )}
+                {!isUploading && (
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(0,0,0,0)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'background 0.2s',
+                  }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0.4)'; (e.currentTarget.querySelector('span') as HTMLSpanElement).style.opacity = '1' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0)'; (e.currentTarget.querySelector('span') as HTMLSpanElement).style.opacity = '0' }}
+                  >
+                    <span style={{ color: '#fff', fontSize: 13, fontWeight: 600, opacity: 0, transition: 'opacity 0.2s' }}>
+                      Click to upload
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 13, fontWeight: 600 }}>{cat.label}</span>
+                <button
+                  onClick={() => fileRefs.current[cat.key]?.click()}
+                  disabled={isUploading}
+                  style={{
+                    padding: '6px 14px',
+                    background: '#f5f5f5',
+                    border: '1px solid #ddd',
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: isUploading ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {isUploading ? 'Uploading...' : 'Upload'}
+                </button>
+              </div>
               <input
-                type="text"
-                value={images[cat.key]}
-                onChange={e => setImages(prev => ({ ...prev, [cat.key]: e.target.value }))}
-                placeholder="Image URL..."
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #ddd',
-                  borderRadius: 8,
-                  fontSize: 13,
-                  boxSizing: 'border-box',
+                ref={el => { fileRefs.current[cat.key] = el }}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (file) handleUpload(cat.key, file)
+                  e.target.value = ''
                 }}
               />
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -123,7 +187,7 @@ export default function SettingsPage() {
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
         {message && (
-          <span style={{ fontSize: 13, color: message.startsWith('Error') ? '#ef4444' : '#10B981', fontWeight: 600 }}>
+          <span style={{ fontSize: 13, color: message.startsWith('Error') || message.includes('failed') ? '#ef4444' : '#10B981', fontWeight: 600 }}>
             {message}
           </span>
         )}
