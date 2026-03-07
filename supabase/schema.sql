@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS ck_products (
   colors JSONB DEFAULT '[{"n":"Default","h":"#ccc"}]'::jsonb,
   sizes TEXT[] DEFAULT ARRAY['One Size'],
   image_url TEXT NOT NULL,
+  image_urls TEXT[] DEFAULT ARRAY[]::TEXT[],
   description TEXT DEFAULT '',
   condition TEXT DEFAULT 'New',
   badge TEXT,

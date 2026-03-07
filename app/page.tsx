@@ -25,6 +25,7 @@ interface Product {
   colors: ProductColor[]
   sizes: string[]
   img: string
+  imgs: string[]
   desc: string
   cond: string
   badge: string | null
@@ -57,6 +58,7 @@ function mapProduct(p: any): Product {
     colors: p.colors || [{ n: 'Default', h: '#ccc' }],
     sizes: p.sizes || ['One Size'],
     img: p.image_url,
+    imgs: p.image_urls?.length > 0 ? p.image_urls : [p.image_url],
     desc: p.description || '',
     cond: p.condition || 'New',
     badge: p.badge,
@@ -119,6 +121,7 @@ export default function Home() {
   const [selProd, setSelProd] = useState<Product | null>(null)
   const [selColor, setSelColor] = useState(0)
   const [selSize, setSelSize] = useState<string | null>(null)
+  const [selImg, setSelImg] = useState(0)
   const [cat, setCat] = useState('all')
   const [col, setCol] = useState('all')
   const [search, setSearch] = useState('')
@@ -237,7 +240,7 @@ export default function Home() {
   }
   const updQ = (k: string, d: number) => setCart(p => p.map(i => i.key === k ? { ...i, qty: Math.max(0, i.qty + d) } : i).filter(i => i.qty > 0))
   const rmC = (k: string) => setCart(p => p.filter(i => i.key !== k))
-  const openP = (p: Product) => { setSelProd(p); setSelColor(0); setSelSize(null); setView('product'); window.scrollTo(0, 0) }
+  const openP = (p: Product) => { setSelProd(p); setSelColor(0); setSelSize(null); setSelImg(0); setView('product'); window.scrollTo(0, 0) }
   const goShop = (c?: string, co?: string) => { setView('shop'); if (c) setCat(c); if (co) setCol(co); setSort('default'); window.scrollTo(0, 0) }
   const filt = products.filter(p => (cat === 'all' || p.cat === cat) && (col === 'all' || p.col === col) && (!search || p.title.toLowerCase().includes(search.toLowerCase())))
   const sorted = sort === 'price-asc' ? [...filt].sort((a, b) => a.price - b.price) : sort === 'price-desc' ? [...filt].sort((a, b) => b.price - a.price) : sort === 'newest' ? [...filt].sort((a, b) => Number(b.id) - Number(a.id)) : filt
@@ -258,6 +261,21 @@ export default function Home() {
   const submitListing = async () => {
     if (!sellForm.title || !sellForm.price || sellImgs.length === 0) { notify('Need photo, title & price!'); return }
     try {
+      // Upload all images to Supabase Storage
+      const uploadedUrls: string[] = []
+      for (const dataUrl of sellImgs) {
+        const blob = await fetch(dataUrl).then(r => r.blob())
+        const fd = new FormData()
+        fd.append('file', blob, `product-${Date.now()}.jpg`)
+        fd.append('prefix', 'products')
+        const upRes = await fetch('/api/upload', { method: 'POST', body: fd })
+        if (upRes.ok) {
+          const { url } = await upRes.json()
+          uploadedUrls.push(url)
+        }
+      }
+      if (uploadedUrls.length === 0) { notify('Failed to upload images'); return }
+
       const res = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -269,7 +287,8 @@ export default function Home() {
           collection: 'new',
           colors: [{ n: 'As Shown', h: '#ccc' }],
           sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
-          image_url: sellImgs[0],
+          image_url: uploadedUrls[0],
+          image_urls: uploadedUrls,
           description: sellForm.desc || '',
           condition: sellForm.cond,
           badge: 'NEW',
@@ -282,13 +301,12 @@ export default function Home() {
         resetSell()
         notify('Item is LIVE!')
       } else {
-        // Fallback to local state if API fails
         setProducts(p => [{
           id: crypto.randomUUID(), title: sellForm.title, price: parseFloat(sellForm.price),
           compare: sellForm.compare ? parseFloat(sellForm.compare) : null,
           cat: sellForm.cat, col: 'new', colors: [{ n: 'As Shown', h: '#ccc' }],
           sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
-          img: sellImgs[0], desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
+          img: uploadedUrls[0], imgs: uploadedUrls, desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
         }, ...p])
         resetSell()
         notify('Item is LIVE! (local only)')
@@ -299,7 +317,7 @@ export default function Home() {
         compare: sellForm.compare ? parseFloat(sellForm.compare) : null,
         cat: sellForm.cat, col: 'new', colors: [{ n: 'As Shown', h: '#ccc' }],
         sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
-        img: sellImgs[0], desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
+        img: sellImgs[0], imgs: sellImgs, desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
       }, ...p])
       resetSell()
       notify('Item is LIVE! (local only)')
@@ -657,7 +675,13 @@ export default function Home() {
         <button onClick={() => setView('shop')} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', cursor: 'pointer', color: '#888', fontSize: 12, fontWeight: 600, marginBottom: 22 }}><IC.Back /> Back</button>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 44 }} className="hg">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <div><img src={selProd.img} alt={selProd.title} style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', borderRadius: 18, background: '#f0ede8' }} onError={e => { (e.target as HTMLImageElement).style.background = '#f0ede8' }} /></div>
+          <div>
+            <img src={selProd.imgs[selImg] || selProd.img} alt={selProd.title} style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', borderRadius: 18, background: '#f0ede8' }} onError={e => { (e.target as HTMLImageElement).style.background = '#f0ede8' }} />
+            {selProd.imgs.length > 1 && <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {selProd.imgs.map((imgUrl, i) => <button key={i} onClick={() => setSelImg(i)} style={{ padding: 0, border: selImg === i ? `2px solid #1a1a1a` : '2px solid #eee', borderRadius: 10, overflow: 'hidden', cursor: 'pointer', background: 'none', width: 64, height: 80, flexShrink: 0 }}><img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /></button>)}
+            </div>}
+          </div>
           <div style={{ paddingTop: 8 }}>
             {selProd.badge && <span style={{ display: 'inline-block', fontSize: 9, fontWeight: 800, letterSpacing: '1.5px', padding: '4px 12px', borderRadius: 20, marginBottom: 12, background: badgeColor(selProd.badge), color: selProd.badge === 'TIKTOK' ? C.dark : '#fff' }}>{badgeText(selProd.badge)}</span>}
             <h1 style={{ fontFamily: F.head, fontSize: 30, fontWeight: 900, marginBottom: 10 }}>{selProd.title}</h1>

@@ -8,6 +8,7 @@ export interface Product {
   colors: ProductColor[]
   sizes: string[]
   image_url: string
+  image_urls: string[]
   description: string
   condition: string
   badge: string | null

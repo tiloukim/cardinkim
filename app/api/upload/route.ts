@@ -13,8 +13,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No file provided' }, { status: 400 })
   }
 
+  const prefix = (formData.get('prefix') as string) || 'products'
   const ext = file.name.split('.').pop() || 'jpg'
-  const path = `categories/${Date.now()}.${ext}`
+  const path = `${prefix}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
 
   const supabase = createServiceClient()
   const { error } = await supabase.storage

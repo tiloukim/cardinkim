@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 
 interface Product {
   id: string
@@ -10,6 +10,7 @@ interface Product {
   category: string
   collection: string
   image_url: string
+  image_urls: string[]
   stock: number
   is_active: boolean
   badge: string | null
@@ -28,7 +29,7 @@ const SIZES_PRESETS: Record<string, string[]> = {
   onesize: ['One Size'],
 }
 
-const EMPTY_FORM = { title: '', price: '', compare_price: '', category: 'tops', collection: 'new', condition: 'New', badge: 'NEW', stock: '1', image_url: '', description: '', sizes: 'clothing' }
+const EMPTY_FORM = { title: '', price: '', compare_price: '', category: 'tops', collection: 'new', condition: 'New', badge: 'NEW', stock: '1', description: '', sizes: 'clothing' }
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([])
@@ -36,10 +37,16 @@ export default function AdminProducts() {
   const [editing, setEditing] = useState<string | null>(null)
   const [editStock, setEditStock] = useState('')
   const [editPrice, setEditPrice] = useState('')
+  const [editImages, setEditImages] = useState<string[]>([])
+  const [editUploading, setEditUploading] = useState(false)
+  const editFileRef = useRef<HTMLInputElement>(null)
   const [showAdd, setShowAdd] = useState(false)
   const [addForm, setAddForm] = useState({ ...EMPTY_FORM })
+  const [addImages, setAddImages] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
   const [addError, setAddError] = useState('')
   const [adding, setAdding] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -75,9 +82,49 @@ export default function AdminProducts() {
     } catch { /* ignore */ }
   }
 
+  const handleEditFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+    setEditUploading(true)
+    for (const file of Array.from(files)) {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('prefix', 'products')
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: fd })
+        if (res.ok) {
+          const { url } = await res.json()
+          setEditImages(prev => [...prev, url])
+        }
+      } catch { /* ignore */ }
+    }
+    setEditUploading(false)
+    e.target.value = ''
+  }
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+    setUploading(true)
+    for (const file of Array.from(files)) {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('prefix', 'products')
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: fd })
+        if (res.ok) {
+          const { url } = await res.json()
+          setAddImages(prev => [...prev, url])
+        }
+      } catch { /* ignore */ }
+    }
+    setUploading(false)
+    e.target.value = ''
+  }
+
   const handleAddProduct = async () => {
-    if (!addForm.title || !addForm.price || !addForm.image_url) {
-      setAddError('Title, price, and image URL are required')
+    if (!addForm.title || !addForm.price || addImages.length === 0) {
+      setAddError('Title, price, and at least one image are required')
       return
     }
     setAddError('')
@@ -95,7 +142,8 @@ export default function AdminProducts() {
           condition: addForm.condition,
           badge: addForm.badge || null,
           stock: parseInt(addForm.stock) || 1,
-          image_url: addForm.image_url,
+          image_url: addImages[0],
+          image_urls: addImages,
           description: addForm.description,
           sizes: SIZES_PRESETS[addForm.sizes] || ['One Size'],
         }),
@@ -103,6 +151,7 @@ export default function AdminProducts() {
       if (res.ok) {
         setShowAdd(false)
         setAddForm({ ...EMPTY_FORM })
+        setAddImages([])
         fetchProducts()
       } else {
         const data = await res.json()
@@ -183,8 +232,23 @@ export default function AdminProducts() {
               <input type="number" value={addForm.stock} onChange={e => setAddForm({ ...addForm, stock: e.target.value })} style={inputStyle} />
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={labelStyle}>Image URL *</label>
-              <input value={addForm.image_url} onChange={e => setAddForm({ ...addForm, image_url: e.target.value })} style={inputStyle} placeholder="https://images.unsplash.com/..." />
+              <label style={labelStyle}>Images * {addImages.length > 0 && `(${addImages.length})`}</label>
+              {addImages.length > 0 && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 10 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {addImages.map((url, i) => (
+                    <div key={i} style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', aspectRatio: '3/4' }}>
+                      <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      {i === 0 && <div style={{ position: 'absolute', bottom: 4, left: 4, background: '#1a1a1a', color: '#fff', fontSize: 8, fontWeight: 800, padding: '2px 6px', borderRadius: 6, letterSpacing: '1px' }}>COVER</div>}
+                      <button onClick={() => setAddImages(prev => prev.filter((_, j) => j !== i))} style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: '50%', background: 'rgba(0,0,0,.6)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>&times;</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" multiple hidden onChange={handleFileSelect} />
+              <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading} style={{ ...inputStyle, cursor: 'pointer', background: '#fafafa', textAlign: 'center', color: uploading ? '#999' : '#666', fontWeight: 600 }}>
+                {uploading ? 'Uploading...' : '+ Upload Images'}
+              </button>
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={labelStyle}>Description</label>
@@ -215,7 +279,8 @@ export default function AdminProducts() {
             </thead>
             <tbody>
               {products.map(p => (
-                <tr key={p.id}>
+                <React.Fragment key={p.id}>
+                <tr>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -264,7 +329,7 @@ export default function AdminProducts() {
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button
                           className="admin-btn admin-btn-sm"
-                          onClick={() => updateProduct(p.id, { price: parseFloat(editPrice), stock: parseInt(editStock) })}
+                          onClick={() => updateProduct(p.id, { price: parseFloat(editPrice), stock: parseInt(editStock), image_urls: editImages, image_url: editImages[0] || p.image_url })}
                         >Save</button>
                         <button className="admin-btn admin-btn-sm admin-btn-ghost" onClick={() => setEditing(null)}>Cancel</button>
                       </div>
@@ -272,13 +337,35 @@ export default function AdminProducts() {
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button
                           className="admin-btn admin-btn-sm"
-                          onClick={() => { setEditing(p.id); setEditPrice(p.price.toString()); setEditStock(p.stock.toString()) }}
+                          onClick={() => { setEditing(p.id); setEditPrice(p.price.toString()); setEditStock(p.stock.toString()); setEditImages(p.image_urls?.length > 0 ? [...p.image_urls] : [p.image_url]) }}
                         >Edit</button>
                         <button className="admin-btn admin-btn-sm admin-btn-danger" onClick={() => deleteProduct(p.id)}>Remove</button>
                       </div>
                     )}
                   </td>
                 </tr>
+                {editing === p.id && (
+                  <tr>
+                    <td colSpan={6} style={{ padding: '12px 16px', background: '#fafafa' }}>
+                      <label style={labelStyle}>Images ({editImages.length})</label>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        {editImages.map((url, i) => (
+                          <div key={i} style={{ position: 'relative', width: 64, height: 80, borderRadius: 8, overflow: 'hidden', flexShrink: 0 }}>
+                            <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            {i === 0 && <div style={{ position: 'absolute', bottom: 2, left: 2, background: '#1a1a1a', color: '#fff', fontSize: 7, fontWeight: 800, padding: '1px 4px', borderRadius: 4, letterSpacing: '0.5px' }}>COVER</div>}
+                            <button onClick={() => setEditImages(prev => prev.filter((_, j) => j !== i))} style={{ position: 'absolute', top: 2, right: 2, width: 16, height: 16, borderRadius: '50%', background: 'rgba(0,0,0,.6)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, lineHeight: 1 }}>&times;</button>
+                          </div>
+                        ))}
+                        <input ref={editFileRef} type="file" accept="image/*" multiple hidden onChange={handleEditFileSelect} />
+                        <button onClick={() => editFileRef.current?.click()} disabled={editUploading} style={{ width: 64, height: 80, borderRadius: 8, border: '2px dashed #ccc', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#999', flexShrink: 0 }}>
+                          {editUploading ? '...' : '+'}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
