@@ -308,7 +308,7 @@ export default function Home() {
           compare: sellForm.compare ? parseFloat(sellForm.compare) : null,
           cat: sellForm.cat, col: 'new', colors: [{ n: 'As Shown', h: '#ccc' }],
           sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
-          img: uploadedUrls[0], imgs: uploadedUrls, desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
+          img: uploadedUrls[0], imgs: uploadedUrls, desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1, is_sold: false,
         }, ...p])
         resetSell()
         notify('Item is LIVE! (local only)')
@@ -319,7 +319,7 @@ export default function Home() {
         compare: sellForm.compare ? parseFloat(sellForm.compare) : null,
         cat: sellForm.cat, col: 'new', colors: [{ n: 'As Shown', h: '#ccc' }],
         sizes: sellForm.sizes.length > 0 ? sellForm.sizes : ['One Size'],
-        img: sellImgs[0], imgs: sellImgs, desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1,
+        img: sellImgs[0], imgs: sellImgs, desc: sellForm.desc || '', cond: sellForm.cond, badge: 'NEW', stock: 1, is_sold: false,
       }, ...p])
       resetSell()
       notify('Item is LIVE! (local only)')
