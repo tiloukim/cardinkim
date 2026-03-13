@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -12,6 +13,8 @@ export default function LoginPage() {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [forgotMode, setForgotMode] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState('')
+  const turnstileRef = useRef<TurnstileInstance>(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -21,7 +24,15 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password })
+    const { error: err } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      options: { captchaToken },
+    })
+
+    setCaptchaToken('')
+    turnstileRef.current?.reset()
+
     if (err) {
       setError(err.message)
       setLoading(false)
@@ -94,7 +105,14 @@ export default function LoginPage() {
               className="auth-input"
             />
             {error && <div className="auth-error">{error}</div>}
-            <button type="submit" className="auth-btn" disabled={loading}>
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={setCaptchaToken}
+              onExpire={() => setCaptchaToken('')}
+              options={{ theme: 'light', size: 'flexible' }}
+            />
+            <button type="submit" className="auth-btn" disabled={loading || !captchaToken}>
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>

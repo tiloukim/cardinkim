@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 
 const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC']
 
@@ -19,6 +20,8 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState('')
+  const turnstileRef = useRef<TurnstileInstance>(null)
   const supabase = createClient()
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -35,8 +38,11 @@ export default function SignupPage() {
     const { error: err } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name, phone, address, city, state, zip } },
+      options: { data: { name, phone, address, city, state, zip }, captchaToken },
     })
+
+    setCaptchaToken('')
+    turnstileRef.current?.reset()
 
     if (err) {
       setError(err.message)
@@ -139,7 +145,14 @@ export default function SignupPage() {
                 className="auth-input"
               />
               {error && <div className="auth-error">{error}</div>}
-              <button type="submit" className="auth-btn" disabled={loading}>
+              <Turnstile
+                ref={turnstileRef}
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onSuccess={setCaptchaToken}
+                onExpire={() => setCaptchaToken('')}
+                options={{ theme: 'light', size: 'flexible' }}
+              />
+              <button type="submit" className="auth-btn" disabled={loading || !captchaToken}>
                 {loading ? 'Creating account...' : 'Create Account'}
               </button>
             </form>
