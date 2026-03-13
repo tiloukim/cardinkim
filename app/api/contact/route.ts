@@ -7,10 +7,23 @@ function escapeHtml(s: string) {
 
 export async function POST(req: Request) {
   try {
-    const { name, email, subject, message } = await req.json()
+    const { name, email, subject, message, captchaToken } = await req.json()
 
     if (!name || !email || !subject || !message) {
       return NextResponse.json({ error: 'All fields are required.' }, { status: 400 })
+    }
+
+    // Verify Turnstile CAPTCHA
+    if (captchaToken && process.env.TURNSTILE_SECRET_KEY) {
+      const cfRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: process.env.TURNSTILE_SECRET_KEY, response: captchaToken }),
+      })
+      const cfData = await cfRes.json()
+      if (!cfData.success) {
+        return NextResponse.json({ error: 'CAPTCHA verification failed.' }, { status: 400 })
+      }
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

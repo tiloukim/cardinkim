@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 
 const SUBJECTS = ['General Inquiry', 'Order Issue', 'Returns', 'Shipping', 'Other']
 
@@ -13,11 +14,17 @@ export default function ContactPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState('')
+  const turnstileRef = useRef<TurnstileInstance>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name || !email || !subject || !message) {
       setError('All fields are required.')
+      return
+    }
+    if (!captchaToken) {
+      setError('Please complete the CAPTCHA.')
       return
     }
     setLoading(true)
@@ -27,7 +34,7 @@ export default function ContactPage() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, subject, message }),
+        body: JSON.stringify({ name, email, subject, message, captchaToken }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -98,8 +105,14 @@ export default function ContactPage() {
                 rows={5}
                 style={{ resize: 'vertical' }}
               />
+              <Turnstile
+                ref={turnstileRef}
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onSuccess={setCaptchaToken}
+                onExpire={() => setCaptchaToken('')}
+              />
               {error && <div className="auth-error">{error}</div>}
-              <button type="submit" className="auth-btn" disabled={loading}>
+              <button type="submit" className="auth-btn" disabled={loading || !captchaToken}>
                 {loading ? 'Sending...' : 'Send Message'}
               </button>
             </form>
