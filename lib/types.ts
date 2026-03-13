@@ -14,6 +14,7 @@ export interface Product {
   badge: string | null
   stock: number
   is_active: boolean
+  is_sold: boolean
   created_at: string
 }
 

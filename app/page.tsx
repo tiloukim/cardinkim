@@ -30,6 +30,7 @@ interface Product {
   cond: string
   badge: string | null
   stock: number
+  is_sold: boolean
 }
 
 interface CartItem {
@@ -63,6 +64,7 @@ function mapProduct(p: any): Product {
     cond: p.condition || 'New',
     badge: p.badge,
     stock: p.stock,
+    is_sold: p.is_sold || false,
   }
 }
 
@@ -368,8 +370,9 @@ export default function Home() {
 
   /* --- PRODUCT CARD --- */
   const Card = ({ p, i }: { p: Product; i: number }) => (
-    <div className="pc" style={{ cursor: 'pointer', borderRadius: 16, overflow: 'hidden', background: '#fff', position: 'relative', animation: `fu .5s ease ${i * .05}s both` }} onClick={() => openP(p)}>
-      {p.badge && <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 2, background: badgeColor(p.badge), color: p.badge === 'TIKTOK' ? '#1a1a1a' : '#fff', fontSize: 9, fontWeight: 800, letterSpacing: '1.5px', padding: '4px 11px', borderRadius: 20 }}>{badgeText(p.badge)}</div>}
+    <div className="pc" style={{ cursor: p.is_sold ? 'default' : 'pointer', borderRadius: 16, overflow: 'hidden', background: '#fff', position: 'relative', animation: `fu .5s ease ${i * .05}s both`, opacity: p.is_sold ? 0.7 : 1 }} onClick={() => !p.is_sold && openP(p)}>
+      {p.is_sold && <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 3, background: '#EF4444', color: '#fff', fontSize: 10, fontWeight: 800, letterSpacing: '1.5px', padding: '5px 14px', borderRadius: 20 }}>SOLD</div>}
+      {!p.is_sold && p.badge && <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 2, background: badgeColor(p.badge), color: p.badge === 'TIKTOK' ? '#1a1a1a' : '#fff', fontSize: 9, fontWeight: 800, letterSpacing: '1.5px', padding: '4px 11px', borderRadius: 20 }}>{badgeText(p.badge)}</div>}
       <button className="wb" style={{ position: 'absolute', top: 10, right: 10, zIndex: 2, background: 'rgba(255,255,255,.85)', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }} onClick={e => { e.stopPropagation(); setWish(pr => { const n = new Set(pr); n.has(p.id) ? n.delete(p.id) : n.add(p.id); return n }) }}><IC.Heart f={wish.has(p.id)} /></button>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <div style={{ overflow: 'hidden' }}><img src={p.img} alt={p.title} className="pi" style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block', background: '#f0ede8' }} onError={e => { (e.target as HTMLImageElement).src = fb(p.title) }} /></div>
@@ -691,8 +694,14 @@ export default function Home() {
             <p style={{ fontSize: 14, color: '#666', lineHeight: 1.7, marginBottom: 24, marginTop: 12 }}>{selProd.desc}</p>
             {selProd.colors.length > 1 && <div style={{ marginBottom: 22 }}><div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '1px', color: '#888' }}>Color — {selProd.colors[selColor]?.n}</div><div style={{ display: 'flex', gap: 8 }}>{selProd.colors.map((co, i) => <button key={i} onClick={() => setSelColor(i)} style={{ width: 34, height: 34, borderRadius: '50%', background: co.h, border: selColor === i ? `3px solid ${C.dark}` : co.h === '#fff' ? '2px solid #ddd' : '2px solid transparent', cursor: 'pointer', outline: selColor === i ? '2px solid #fff' : 'none', outlineOffset: '-5px' }} />)}</div></div>}
             <div style={{ marginBottom: 24 }}><div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '1px', color: '#888' }}>Size {selSize && `— ${selSize}`}</div><div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>{selProd.sizes.map(s => <button key={s} onClick={() => setSelSize(s)} style={{ padding: '9px 16px', borderRadius: 10, background: selSize === s ? C.dark : '#fff', color: selSize === s ? '#fff' : C.dark, border: selSize === s ? 'none' : '1.5px solid #ddd', fontSize: 12, fontWeight: 700, cursor: 'pointer', minWidth: 44, fontFamily: F.body, transition: 'all .15s' }}>{s}</button>)}</div></div>
-            {selProd.stock < 15 && <div style={{ fontSize: 12, color: C.accent, fontWeight: 600, marginBottom: 14 }}>Only {selProd.stock} left</div>}
-            <button onClick={() => addCart(selProd, selProd.colors[selColor]?.n, selSize)} className="bp" style={btn(C.accent, C.dark, { width: '100%', fontSize: 15, padding: '16px' })}>Add to Bag — ${selProd.price.toFixed(2)}</button>
+            {selProd.is_sold ? (
+              <div style={{ background: '#FEE2E2', color: '#DC2626', fontWeight: 700, fontSize: 14, padding: '14px 20px', borderRadius: 12, textAlign: 'center', marginBottom: 14 }}>This item has been sold</div>
+            ) : (
+              <>
+                {selProd.stock < 15 && <div style={{ fontSize: 12, color: C.accent, fontWeight: 600, marginBottom: 14 }}>Only {selProd.stock} left</div>}
+                <button onClick={() => addCart(selProd, selProd.colors[selColor]?.n, selSize)} className="bp" style={btn(C.accent, C.dark, { width: '100%', fontSize: 15, padding: '16px' })}>Add to Bag — ${selProd.price.toFixed(2)}</button>
+              </>
+            )}
           </div>
         </div>
       </section>}

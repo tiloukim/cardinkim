@@ -13,6 +13,7 @@ interface Product {
   image_urls: string[]
   stock: number
   is_active: boolean
+  is_sold: boolean
   badge: string | null
   condition: string
   created_at: string
@@ -274,6 +275,7 @@ export default function AdminProducts() {
                 <th>Category</th>
                 <th>Stock</th>
                 <th>Badge</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -324,6 +326,22 @@ export default function AdminProducts() {
                     )}
                   </td>
                   <td>{p.badge && <span className="admin-badge">{p.badge}</span>}</td>
+                  <td>
+                    <button
+                      className="admin-btn admin-btn-sm"
+                      style={{
+                        background: p.is_sold ? '#EF4444' : '#10B981',
+                        color: '#fff',
+                        border: 'none',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: '0.5px',
+                      }}
+                      onClick={() => updateProduct(p.id, { is_sold: !p.is_sold })}
+                    >
+                      {p.is_sold ? 'SOLD' : 'Available'}
+                    </button>
+                  </td>
                   <td>
                     {editing === p.id ? (
                       <div style={{ display: 'flex', gap: 6 }}>
