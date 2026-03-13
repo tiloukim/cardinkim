@@ -388,7 +388,6 @@ export default function Home() {
   )
 
   return (
-    <PayPalScriptProvider options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test', currency: 'USD' }}>
     <div style={{ fontFamily: F.body, background: C.bg, minHeight: '100vh' }}>
       {/* TOAST */}
       {toast && <div style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: C.dark, color: '#fff', padding: '11px 26px', borderRadius: 50, fontSize: 13, fontWeight: 600, boxShadow: '0 8px 28px rgba(0,0,0,.2)', animation: 'sd .3s ease' }}>{toast}</div>}
@@ -734,6 +733,7 @@ export default function Home() {
         {/* PAYPAL BUTTON */}
         <div style={{ background: '#fff', borderRadius: 18, padding: 24, marginBottom: 20, border: '1px solid #eee' }}>
           <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 14 }}>Payment</h3>
+          <PayPalScriptProvider options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test', currency: 'USD' }}>
           {paypalProcessing ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: 24 }}>
               <div style={{ width: 18, height: 18, border: '3px solid rgba(0,0,0,.1)', borderTop: '3px solid #0070BA', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
@@ -747,6 +747,7 @@ export default function Home() {
               onError={() => notify('PayPal error — please try again')}
             />
           )}
+          </PayPalScriptProvider>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, fontSize: 11, color: '#aaa' }}>
             <IC.Shield /> Secure checkout powered by PayPal
           </div>
@@ -808,6 +809,5 @@ export default function Home() {
         <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 20 }}><div style={{ fontSize: 15, color: '#555' }}>&copy; 2026 CardinKim. All rights reserved.</div></div>
       </footer>
     </div>
-    </PayPalScriptProvider>
   )
 }
