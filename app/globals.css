@@ -1222,6 +1222,7 @@ input:focus, select:focus, textarea:focus {
   flex-direction: column;
   overflow: hidden;
   animation: su .3s ease;
+  box-sizing: border-box;
 }
 .chat-widget-header {
   padding: 16px 20px;
@@ -1285,15 +1286,32 @@ input:focus, select:focus, textarea:focus {
   .chat-widget-panel {
     left: 8px;
     right: 8px;
-    bottom: 84px;
+    bottom: 74px;
     width: auto;
-    max-height: calc(100vh - 120px);
-    max-height: calc(100dvh - 120px);
+    max-height: 70vh;
+    max-height: 70dvh;
+    border-radius: 16px;
+  }
+  .chat-widget-header {
+    padding: 12px 16px;
   }
   .chat-widget-messages {
-    min-height: 180px;
-    max-height: calc(100vh - 280px);
-    max-height: calc(100dvh - 280px);
+    min-height: 120px;
+    max-height: 45vh;
+    max-height: 45dvh;
+    padding: 12px;
+  }
+  .chat-widget-input {
+    padding: 8px 10px;
+  }
+  .chat-widget-input input {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  .chat-widget-input button {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
   }
   .chat-widget-btn {
     bottom: 16px;
@@ -1302,9 +1320,8 @@ input:focus, select:focus, textarea:focus {
     height: 50px;
     font-size: 22px;
   }
-  .chat-msg-bubble { font-size: 13px; }
-  .chat-input-bar { padding: 10px 12px; }
-  .chat-input { font-size: 14px; padding: 10px 14px; }
+  .chat-msg-bubble { font-size: 13px; padding: 8px 12px; }
+  .chat-msg-time { font-size: 9px; }
 }
 
 /* Category tiles */
