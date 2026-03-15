@@ -2,9 +2,15 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+interface Customer {
+  id: string
+  name: string
+  email: string
+}
+
 interface Conversation {
   id: string
-  customer: { id: string; name: string; email: string }
+  customer: Customer
   lastMessage: string
   lastAt: string
   unread: number
@@ -21,11 +27,14 @@ interface Message {
 
 export default function AdminMessagesPage() {
   const [conversations, setConversations] = useState<Conversation[]>([])
+  const [customers, setCustomers] = useState<Customer[]>([])
   const [messages, setMessages] = useState<Message[]>([])
   const [selected, setSelected] = useState<Conversation | null>(null)
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [showNewChat, setShowNewChat] = useState(false)
+  const [search, setSearch] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
 
   const fetchConversations = useCallback(async () => {
@@ -34,6 +43,16 @@ export default function AdminMessagesPage() {
       if (res.ok) setConversations(await res.json())
     } catch { /* ignore */ }
     setLoading(false)
+  }, [])
+
+  const fetchCustomers = useCallback(async () => {
+    try {
+      const res = await fetch('/api/customers')
+      if (res.ok) {
+        const data = await res.json()
+        setCustomers(data.map((c: Customer & { is_admin?: boolean }) => ({ id: c.id, name: c.name, email: c.email })))
+      }
+    } catch { /* ignore */ }
   }, [])
 
   const fetchMessages = useCallback(async (customerId: string) => {
@@ -52,7 +71,6 @@ export default function AdminMessagesPage() {
   useEffect(() => {
     if (!selected) return
     fetchMessages(selected.customer.id)
-    // Mark as read
     fetch('/api/messages', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -66,6 +84,24 @@ export default function AdminMessagesPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  const startNewChat = (cust: Customer) => {
+    // Check if conversation already exists
+    const existing = conversations.find(c => c.customer.id === cust.id)
+    if (existing) {
+      setSelected(existing)
+    } else {
+      setSelected({
+        id: cust.id,
+        customer: cust,
+        lastMessage: '',
+        lastAt: new Date().toISOString(),
+        unread: 0,
+      })
+    }
+    setShowNewChat(false)
+    setSearch('')
+  }
+
   const sendMessage = async () => {
     if (!text.trim() || !selected || sending) return
     setSending(true)
@@ -78,10 +114,19 @@ export default function AdminMessagesPage() {
       if (res.ok) {
         setText('')
         await fetchMessages(selected.customer.id)
+        await fetchConversations()
       }
     } catch { /* ignore */ }
     setSending(false)
   }
+
+  const filteredCustomers = customers.filter(c =>
+    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.email.toLowerCase().includes(search.toLowerCase())
+  )
+
+  // Customers who already have conversations
+  const existingIds = new Set(conversations.map(c => c.customer.id))
 
   if (loading) return <div className="admin-loading">Loading messages...</div>
 
@@ -91,10 +136,82 @@ export default function AdminMessagesPage() {
       <div className="chat-conv-list">
         <div className="chat-conv-header">
           <strong>Conversations</strong>
-          <span style={{ fontSize: 12, color: '#999' }}>{conversations.length}</span>
+          <button
+            onClick={() => { setShowNewChat(!showNewChat); if (!customers.length) fetchCustomers() }}
+            style={{
+              background: '#1a1a1a',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 50,
+              padding: '5px 12px',
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            + New
+          </button>
         </div>
-        {conversations.length === 0 ? (
-          <div className="admin-empty">No messages yet</div>
+
+        {/* New chat customer picker */}
+        {showNewChat && (
+          <div style={{ borderBottom: '1px solid #eee' }}>
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search customer..."
+              style={{
+                width: '100%',
+                padding: '10px 16px',
+                border: 'none',
+                borderBottom: '1px solid #f0f0f0',
+                fontSize: 13,
+                fontFamily: 'inherit',
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
+              autoFocus
+            />
+            <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+              {filteredCustomers.length === 0 ? (
+                <div style={{ padding: 16, fontSize: 12, color: '#999', textAlign: 'center' }}>
+                  {customers.length === 0 ? 'Loading customers...' : 'No customers found'}
+                </div>
+              ) : (
+                filteredCustomers.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => startNewChat(c)}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      padding: '10px 16px',
+                      border: 'none',
+                      borderBottom: '1px solid #f8f8f6',
+                      background: existingIds.has(c.id) ? '#f8f8f6' : '#fff',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a' }}>{c.name}</div>
+                    <div style={{ fontSize: 11, color: '#999' }}>
+                      {c.email}
+                      {existingIds.has(c.id) && <span style={{ marginLeft: 6, color: '#E8453C', fontWeight: 700 }}>has chat</span>}
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {conversations.length === 0 && !showNewChat ? (
+          <div className="admin-empty">
+            No messages yet<br />
+            <span style={{ fontSize: 12, color: '#bbb' }}>Click + New to start a conversation</span>
+          </div>
         ) : (
           conversations.map(conv => (
             <button
@@ -122,6 +239,11 @@ export default function AdminMessagesPage() {
               <span style={{ fontSize: 12, color: '#999' }}>{selected.customer.email}</span>
             </div>
             <div className="chat-messages">
+              {messages.length === 0 && (
+                <div style={{ textAlign: 'center', color: '#999', fontSize: 13, padding: '40px 16px' }}>
+                  No messages yet. Send the first message!
+                </div>
+              )}
               {messages.map(msg => (
                 <div key={msg.id} className={`chat-msg ${msg.sender_role === 'admin' ? 'chat-msg-admin' : 'chat-msg-customer'}`}>
                   <div className="chat-msg-bubble">
@@ -150,7 +272,7 @@ export default function AdminMessagesPage() {
         ) : (
           <div className="chat-empty">
             <div style={{ fontSize: 48, marginBottom: 12 }}>&#128172;</div>
-            <p>Select a conversation to view messages</p>
+            <p>Select a conversation or start a new one</p>
           </div>
         )}
       </div>
