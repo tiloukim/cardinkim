@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { DM_Sans, Fraunces } from 'next/font/google'
 import { AuthProvider } from '@/lib/auth-context'
+import ChatWidget from '@/components/ChatWidget'
 import './globals.css'
 
 const dmSans = DM_Sans({
@@ -56,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${dmSans.variable} ${fraunces.variable} antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>{children}<ChatWidget /></AuthProvider>
       </body>
     </html>
   )
