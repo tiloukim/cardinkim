@@ -121,25 +121,49 @@ export default function AdminOrderDetail() {
         ))}
       </div>
 
-      {nextStatus && nextStatus !== 'shipped' && (
-        <button
-          className="admin-action-btn"
-          onClick={() => updateStatus(nextStatus)}
+      {/* Status Change */}
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '16px 0', flexWrap: 'wrap' }}>
+        <label style={{ fontSize: 13, fontWeight: 700, color: '#666' }}>Change Status:</label>
+        <select
+          value={order.status}
+          onChange={e => {
+            const newStatus = e.target.value
+            if (newStatus === 'shipped') {
+              setShipModalOpen(true)
+            } else {
+              updateStatus(newStatus)
+            }
+          }}
           disabled={updating}
+          style={{ padding: '8px 14px', border: '2px solid #eee', borderRadius: 10, fontSize: 13, fontWeight: 600, fontFamily: 'var(--font-dm-sans), sans-serif', cursor: 'pointer', textTransform: 'capitalize' }}
         >
-          {updating ? 'Updating...' : `Mark as ${nextStatus}`}
-        </button>
-      )}
+          {STATUS_FLOW.map(s => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
 
-      {nextStatus === 'shipped' && (
-        <button
-          className="admin-action-btn"
-          onClick={() => setShipModalOpen(true)}
-          disabled={updating}
-        >
-          Mark as Shipped
-        </button>
-      )}
+        {nextStatus && nextStatus !== 'shipped' && (
+          <button
+            className="admin-action-btn"
+            onClick={() => updateStatus(nextStatus)}
+            disabled={updating}
+            style={{ margin: 0 }}
+          >
+            {updating ? 'Updating...' : `Mark as ${nextStatus}`}
+          </button>
+        )}
+
+        {nextStatus === 'shipped' && (
+          <button
+            className="admin-action-btn"
+            onClick={() => setShipModalOpen(true)}
+            disabled={updating}
+            style={{ margin: 0 }}
+          >
+            Mark as Shipped
+          </button>
+        )}
+      </div>
 
       <div className="admin-detail-grid">
         {/* Items */}

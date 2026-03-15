@@ -68,7 +68,7 @@ export default function AdminOrders() {
             <tbody>
               {orders.map(o => (
                 <tr key={o.id}>
-                  <td className="admin-order-id">#{o.id.slice(0, 8)}</td>
+                  <td><Link href={`/admin/orders/${o.id}`} className="admin-order-id" style={{ color: '#D4A574', textDecoration: 'none' }}>#{o.id.slice(0, 8)}</Link></td>
                   <td>
                     <div>{o.ck_customers?.name || o.shipping_name}</div>
                     <div className="admin-sub-text">{o.ck_customers?.email || o.shipping_email}</div>
