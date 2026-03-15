@@ -76,8 +76,12 @@ export default function AdminOrderDetail() {
         body: JSON.stringify({ status: newStatus, ...extra }),
       })
       if (res.ok) {
-        const updated = await res.json()
-        setOrder(prev => prev ? { ...prev, ...updated } : prev)
+        // Re-fetch full order with joins
+        const refetch = await fetch(`/api/orders/${params.id}`)
+        if (refetch.ok) setOrder(await refetch.json())
+      } else {
+        const err = await res.json()
+        alert(`Failed to update: ${err.error || 'Unknown error'}`)
       }
     } catch { /* ignore */ }
     setUpdating(false)
