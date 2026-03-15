@@ -46,7 +46,7 @@ interface OrderDetail {
   }>
 }
 
-const STATUS_FLOW = ['paid', 'processing', 'shipped', 'delivered']
+const STATUS_FLOW = ['paid', 'processing', 'shipped', 'delivered', 'cancelled', 'payment_error']
 
 export default function AdminOrderDetail() {
   const params = useParams()

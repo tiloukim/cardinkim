@@ -15,7 +15,7 @@ interface Order {
   ck_order_items: Array<{ title: string; quantity: number }>
 }
 
-const STATUSES = ['all', 'paid', 'processing', 'shipped', 'delivered']
+const STATUSES = ['all', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'payment_error']
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([])
