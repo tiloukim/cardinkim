@@ -21,10 +21,10 @@ export default function ChatWidget() {
   const [unread, setUnread] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Don't show for admins (they use the admin panel) or logged out users
-  if (!user || !customer || customer.is_admin) return null
+  const shouldShow = !!user && !!customer && !customer.is_admin
 
   const fetchMessages = useCallback(async () => {
+    if (!shouldShow) return
     try {
       const res = await fetch('/api/messages')
       if (res.ok) {
@@ -33,18 +33,18 @@ export default function ChatWidget() {
         setUnread(data.filter(m => m.sender_role === 'admin' && !m.is_read).length)
       }
     } catch { /* ignore */ }
-  }, [])
+  }, [shouldShow])
 
   useEffect(() => {
+    if (!shouldShow) return
     fetchMessages()
     const interval = setInterval(fetchMessages, 10000)
     return () => clearInterval(interval)
-  }, [fetchMessages])
+  }, [shouldShow, fetchMessages])
 
   useEffect(() => {
-    if (open) {
+    if (open && shouldShow) {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-      // Mark admin messages as read
       if (unread > 0) {
         fetch('/api/messages', {
           method: 'PATCH',
@@ -53,7 +53,7 @@ export default function ChatWidget() {
         }).then(() => setUnread(0))
       }
     }
-  }, [open, messages, unread])
+  }, [open, messages, unread, shouldShow])
 
   const sendMessage = async () => {
     if (!text.trim() || sending) return
@@ -72,9 +72,10 @@ export default function ChatWidget() {
     setSending(false)
   }
 
+  if (!shouldShow) return null
+
   return (
     <>
-      {/* Chat bubble button */}
       <button
         onClick={() => setOpen(!open)}
         className="chat-widget-btn"
@@ -83,7 +84,6 @@ export default function ChatWidget() {
         {!open && unread > 0 && <span className="chat-widget-badge">{unread}</span>}
       </button>
 
-      {/* Chat panel */}
       {open && (
         <div className="chat-widget-panel">
           <div className="chat-widget-header">
