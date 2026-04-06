@@ -10,5 +10,7 @@
 			"*.cardinkim.com"
 		]
 	},
-	"packageClassList": []
+	"packageClassList": [
+		"PushNotificationsPlugin"
+	]
 }

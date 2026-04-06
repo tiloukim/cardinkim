@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1a1a1a"/>
+  <text x="256" y="220" text-anchor="middle" font-size="120" font-family="sans-serif" fill="#1D9E75" font-weight="bold">PM</text>
+  <text x="256" y="340" text-anchor="middle" font-size="60" font-family="sans-serif" fill="#ffffff" font-weight="600">TRACKER</text>
+  <text x="256" y="410" text-anchor="middle" font-size="36" font-family="sans-serif" fill="#888888">CardinKim</text>
+</svg>

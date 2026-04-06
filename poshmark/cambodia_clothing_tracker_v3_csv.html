@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cambodia Clothing Tracker v3</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;font-size:14px;background:#f5f5f0;min-height:100vh}
+.app{max-width:1020px;margin:0 auto;padding:1.5rem 1rem}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px}
+.header-title{font-size:22px;font-weight:600;color:#1a1a1a}
+.header-sub{font-size:12px;color:#888;margin-top:2px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid #e0e0e0;margin-bottom:1.5rem;flex-wrap:wrap;background:#f5f5f0}
+.tab{padding:9px 15px;cursor:pointer;border:none;background:none;color:#888;font-size:13px;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit}
+.tab:hover{color:#1a1a1a}
+.tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:500}
+.section-title{font-size:15px;font-weight:600;margin-bottom:1rem;color:#1a1a1a}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
+.metric{background:#f9f9f7;border-radius:8px;padding:1rem;border:1px solid #ebebeb}
+.metric-label{font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.metric-value{font-size:20px;font-weight:600;color:#1a1a1a}
+.metric-value.green{color:#1D9E75}
+.metric-value.red{color:#D85A30}
+.metric-value.amber{color:#BA7517}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.04em;font-weight:500}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;font-family:inherit}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#888}
+.btn{padding:8px 16px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#1a1a1a;cursor:pointer;font-size:14px;font-family:inherit;transition:background .15s}
+.btn:hover{background:#f5f5f5}
+.btn-primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.btn-primary:hover{background:#333}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{color:#D85A30;border-color:rgba(216,90,48,0.3)}
+.btn-danger:hover{background:#fff5f2}
+.btn-csv{background:#E1F5EE;color:#085041;border-color:#9FE1CB}
+.btn-csv:hover{background:#c8ede0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 10px;border-bottom:1px solid #ebebeb;color:#999;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-green{background:#E1F5EE;color:#085041}
+.badge-amber{background:#FAEEDA;color:#633806}
+.badge-blue{background:#E6F1FB;color:#0C447C}
+.badge-red{background:#FCEBEB;color:#791F1F}
+.badge-purple{background:#EEEDFE;color:#3C3489}
+.badge-gray{background:#f1f0ea;color:#444}
+.tax-box{background:#FAEEDA;border:1px solid #FAC775;border-radius:12px;padding:1.25rem;margin-top:1rem}
+.tax-box-title{color:#633806;font-size:14px;font-weight:600;margin-bottom:12px}
+.tax-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(186,117,23,0.2);font-size:13px;color:#1a1a1a}
+.tax-row:last-child{border-bottom:none;font-weight:600;font-size:14px;padding-top:10px}
+.page{display:none}.page.active{display:block}
+.empty-state{text-align:center;padding:3rem;color:#aaa;font-size:13px}
+.divider{height:1px;background:#f0f0f0;margin:1rem 0}
+.cost-section{background:#f9f9f7;border-radius:8px;padding:12px 14px;margin-bottom:12px;border:1px solid #ebebeb}
+.cost-section-label{font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.profit-bar{height:4px;border-radius:2px;background:#ebebeb;margin-top:5px}
+.profit-fill{height:100%;border-radius:2px}
+.csv-drop-zone{border:2px dashed #ddd;border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+.csv-drop-zone:hover,.csv-drop-zone.drag-over{border-color:#1D9E75;background:#f0fdf8}
+.csv-drop-label{font-size:13px;color:#888;margin-top:8px}
+.csv-preview{margin-top:1rem;overflow-x:auto}
+.csv-preview table td,.csv-preview table th{font-size:12px;padding:5px 8px}
+.notice{background:#E6F1FB;border:1px solid #B5D4F4;border-radius:8px;padding:10px 14px;font-size:12px;color:#0C447C;margin-bottom:1rem;line-height:1.6}
+.warning{background:#FAEEDA;border:1px solid #FAC775;border-radius:8px;padding:10px 14px;font-size:12px;color:#633806;margin-bottom:1rem;line-height:1.6}
+.total-row td{font-weight:600;background:#f9f9f7}
+@media(max-width:600px){.form-grid,.form-grid.three{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="header-title">Cambodia Clothing Tracker</div>
+      <div class="header-sub">Import cost, fulfillment &amp; Poshmark sale tracker — v3</div>
+    </div>
+    <button class="btn btn-primary" onclick="switchTab('add')">+ New Shipment</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
+    <button class="tab" onclick="switchTab('shipments')">Shipments</button>
+    <button class="tab" onclick="switchTab('fulfillment')">Fulfillment costs</button>
+    <button class="tab" onclick="switchTab('add')">Add shipment</button>
+    <button class="tab" onclick="switchTab('csv')">Import Poshmark CSV</button>
+    <button class="tab" onclick="switchTab('tax')">Tax estimate</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <div class="metric-grid" id="metrics"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="card">
+        <div class="section-title">Revenue vs profit by shipment</div>
+        <div style="position:relative;width:100%;height:220px"><canvas id="profitChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="section-title">Full cost breakdown</div>
+        <div style="position:relative;width:100%;height:220px"><canvas id="costChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <div class="section-title">Recent shipments</div>
+      <div id="recent-table"></div>
+    </div>
+  </div>
+
+  <!-- SHIPMENTS -->
+  <div id="page-shipments" class="page">
+    <div class="card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th>Shipment</th><th>Date</th><th>Items cost</th><th>Import costs</th><th>Fulfillment</th><th>Total cost</th><th>Revenue</th><th>Net profit</th><th>Margin</th><th>Status</th><th></th>
+          </tr></thead>
+          <tbody id="shipments-table"></tbody>
+        </table>
+      </div>
+      <div id="shipments-empty" class="empty-state" style="display:none">No shipments yet. Add your first one!</div>
+    </div>
+  </div>
+
+  <!-- FULFILLMENT COSTS -->
+  <div id="page-fulfillment" class="page">
+    <div class="card">
+      <div class="section-title">Log fulfillment expense</div>
+      <div class="form-grid three">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="fe-date">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="fe-cat">
+            <option value="packaging">Packaging (boxes, tape, mailers)</option>
+            <option value="domestic_ship">Domestic shipping to customer</option>
+            <option value="labels">Shipping labels / postage</option>
+            <option value="supplies">Packing supplies (tissue, etc.)</option>
+            <option value="other">Other fulfillment</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Link to shipment (optional)</label>
+          <select id="fe-shipment">
+            <option value="">— not linked —</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid" style="margin-top:12px">
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="fe-desc" placeholder="e.g. USPS Priority flat rate boxes x20">
+        </div>
+        <div class="form-group">
+          <label>Amount ($)</label>
+          <input type="number" id="fe-amount" placeholder="0.00" min="0" step="0.01">
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:1rem">
+        <button class="btn btn-primary" onclick="saveFulfillment()">Add expense</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Fulfillment expense log</div>
+      <div id="fulfillment-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1rem"></div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Linked shipment</th><th>Amount</th><th></th></tr></thead>
+          <tbody id="fulfillment-table"></tbody>
+        </table>
+      </div>
+      <div id="fulfillment-empty" class="empty-state" style="display:none">No fulfillment expenses logged yet.</div>
+    </div>
+  </div>
+
+  <!-- ADD SHIPMENT -->
+  <div id="page-add" class="page">
+    <div class="card">
+      <div class="section-title">Shipment details</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Shipment name / ID</label>
+          <input type="text" id="f-name" placeholder="e.g. May 2025 Batch 1">
+        </div>
+        <div class="form-group">
+          <label>Date received</label>
+          <input type="date" id="f-date">
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="cost-section">
+        <div class="cost-section-label">Items purchased from Cambodia suppliers</div>
+        <div id="items-container"></div>
+        <button class="btn btn-sm" onclick="addItem()">+ Add item</button>
+      </div>
+      <div class="cost-section">
+        <div class="cost-section-label">Import costs</div>
+        <div class="form-grid three">
+          <div class="form-group"><label>International shipping ($)</label><input type="number" id="f-shipping" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>US customs / import tax ($)</label><input type="number" id="f-customs" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>MoneyGram fee ($)</label><input type="number" id="f-moneygram" placeholder="0.00" min="0" step="0.01"></div>
+        </div>
+      </div>
+      <div class="cost-section">
+        <div class="cost-section-label">Fulfillment costs (packaging + domestic shipping)</div>
+        <div class="form-grid three">
+          <div class="form-group"><label>Packaging materials ($)</label><input type="number" id="f-packaging" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Domestic shipping to buyers ($)</label><input type="number" id="f-domestic" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Other fulfillment ($)</label><input type="number" id="f-fulfill-other" placeholder="0.00" min="0" step="0.01"></div>
+        </div>
+      </div>
+      <div class="cost-section">
+        <div class="cost-section-label">Poshmark sales (add as sold, or use CSV import tab)</div>
+        <div id="sales-container"></div>
+        <button class="btn btn-sm" onclick="addSale()">+ Add sale</button>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1rem">
+        <button class="btn" onclick="switchTab('shipments')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveShipment()">Save shipment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSV IMPORT -->
+  <div id="page-csv" class="page">
+    <div class="card">
+      <div class="section-title">Import Poshmark sales CSV</div>
+      <div class="notice">
+        <strong>How to get your CSV from Poshmark:</strong><br>
+        1. Open Poshmark app or website &rarr; Account Settings<br>
+        2. Go to <strong>My Sales</strong> &rarr; click <strong>Download</strong> (CSV export)<br>
+        3. Upload that file here — sales will be matched to shipments or added as standalone records.
+      </div>
+      <div class="csv-drop-zone" id="csv-drop" onclick="document.getElementById('csv-file-input').click()">
+        <div style="font-size:28px;color:#ccc">&#8679;</div>
+        <div style="font-weight:500;color:#555;margin-top:6px">Click to upload or drag &amp; drop</div>
+        <div class="csv-drop-label">Accepts .csv files exported from Poshmark</div>
+        <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCSVFile(event)">
+      </div>
+      <div id="csv-manual" style="margin-top:1.5rem">
+        <div style="font-size:13px;color:#999;margin-bottom:8px;font-weight:500">— or paste CSV text directly —</div>
+        <textarea id="csv-paste" rows="6" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:monospace;font-size:12px;resize:vertical" placeholder="Paste your Poshmark CSV export here..."></textarea>
+        <button class="btn btn-primary" style="margin-top:8px" onclick="parseCSVText()">Parse CSV</button>
+      </div>
+    </div>
+    <div id="csv-preview-section" style="display:none">
+      <div class="card">
+        <div class="section-title">Preview — parsed sales</div>
+        <div class="warning" id="csv-warning" style="display:none"></div>
+        <div class="csv-preview" id="csv-preview-table"></div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:1rem;flex-wrap:wrap">
+          <div class="form-group" style="flex:1;min-width:200px">
+            <label>Link to shipment (optional)</label>
+            <select id="csv-link-shipment">
+              <option value="">— not linked to a shipment —</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="importCSVSales()" style="align-self:flex-end">Import all sales</button>
+          <button class="btn" onclick="clearCSVPreview()" style="align-self:flex-end">Clear</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Imported Poshmark sales log</div>
+      <div id="sales-summary-metrics" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1rem"></div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Date</th><th>Item</th><th>Sale price</th><th>Poshmark fee</th><th>Net to you</th><th>Linked shipment</th><th></th></tr></thead>
+          <tbody id="sales-log-table"></tbody>
+        </table>
+      </div>
+      <div id="sales-log-empty" class="empty-state" style="display:none">No imported sales yet. Upload your Poshmark CSV above.</div>
+    </div>
+  </div>
+
+  <!-- TAX -->
+  <div id="page-tax" class="page">
+    <div class="card">
+      <div class="section-title">Tax year settings</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Tax year</label>
+          <select id="tax-year" onchange="renderTax()"><option>2024</option><option selected>2025</option><option>2026</option></select>
+        </div>
+        <div class="form-group">
+          <label>Filing status</label>
+          <select id="filing-status" onchange="renderTax()">
+            <option value="single">Single</option>
+            <option value="mfj">Married filing jointly</option>
+            <option value="hoh">Head of household</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Other income (W-2, etc.) ($)</label>
+          <input type="number" id="other-income" value="0" min="0" oninput="renderTax()">
+        </div>
+        <div class="form-group">
+          <label>Home state tax rate</label>
+          <select id="state-sel" onchange="renderTax()">
+            <option value="0">No state income tax (TX, FL, etc.)</option>
+            <option value="0.05">~5% state tax</option>
+            <option value="0.07">~7% state tax</option>
+            <option value="0.09">~9% (CA, etc.)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="tax-output"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let shipments = JSON.parse(localStorage.getItem('cct_v3_shipments')||'[]');
+let fulfillments = JSON.parse(localStorage.getItem('cct_v3_fulfillments')||'[]');
+let salesLog = JSON.parse(localStorage.getItem('cct_v3_sales')||'[]');
+let csvParsed = [];
+let itemCount=0, saleCount=0;
+let profitChart=null, costChart=null;
+
+function save(){ try{localStorage.setItem('cct_v3_shipments',JSON.stringify(shipments));}catch(e){} }
+function saveFul(){ try{localStorage.setItem('cct_v3_fulfillments',JSON.stringify(fulfillments));}catch(e){} }
+function saveSales(){ try{localStorage.setItem('cct_v3_sales',JSON.stringify(salesLog));}catch(e){} }
+
+function fmt(n){ return '$'+Math.abs(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtS(n){ return (n<0?'-':'')+fmt(n); }
+function g(id){ return document.getElementById(id); }
+
+function switchTab(t){
+  const pages=['dashboard','shipments','fulfillment','add','csv','tax'];
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',pages[i]===t));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  g('page-'+t).classList.add('active');
+  if(t==='dashboard') renderDashboard();
+  if(t==='shipments') renderShipments();
+  if(t==='fulfillment'){ populateFulfillmentShipments(); renderFulfillmentTab(); }
+  if(t==='add') initAddForm();
+  if(t==='csv'){ populateCSVShipmentSelect(); renderSalesLog(); }
+  if(t==='tax') renderTax();
+}
+
+/* ---- ADD SHIPMENT ---- */
+function initAddForm(){
+  itemCount=0; saleCount=0;
+  ['f-name','f-shipping','f-customs','f-moneygram','f-packaging','f-domestic','f-fulfill-other'].forEach(id=>{ const el=g(id); if(el) el.value=''; });
+  g('f-date').value = new Date().toISOString().split('T')[0];
+  g('items-container').innerHTML='';
+  g('sales-container').innerHTML='';
+  addItem();
+}
+
+function addItem(){
+  const c=g('items-container'), id=itemCount++;
+  const d=document.createElement('div');
+  d.id='item-'+id;
+  d.style.cssText='display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px';
+  d.innerHTML=`<div class="form-group"><label>Description</label><input type="text" id="item-desc-${id}" placeholder="e.g. Silk blouses (12 pcs)"></div>
+    <div class="form-group"><label>Qty</label><input type="number" id="item-qty-${id}" value="1" min="1"></div>
+    <div class="form-group"><label>Unit cost ($)</label><input type="number" id="item-cost-${id}" placeholder="0.00" min="0" step="0.01"></div>
+    <button class="btn btn-sm btn-danger" onclick="g('item-${id}').remove()">✕</button>`;
+  c.appendChild(d);
+}
+
+function addSale(){
+  const c=g('sales-container'), id=saleCount++;
+  const d=document.createElement('div');
+  d.id='sale-'+id;
+  d.style.cssText='display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px';
+  d.innerHTML=`<div class="form-group"><label>Item sold</label><input type="text" id="sale-desc-${id}" placeholder="e.g. Silk blouse - navy"></div>
+    <div class="form-group"><label>Qty</label><input type="number" id="sale-qty-${id}" value="1" min="1"></div>
+    <div class="form-group"><label>Poshmark sale price ($)</label><input type="number" id="sale-price-${id}" placeholder="0.00" min="0" step="0.01"></div>
+    <button class="btn btn-sm btn-danger" onclick="g('sale-${id}').remove()">✕</button>`;
+  c.appendChild(d);
+}
+
+function saveShipment(){
+  const name=g('f-name').value.trim(), date=g('f-date').value;
+  if(!name){ alert('Please enter a shipment name.'); return; }
+  const items=[];
+  document.querySelectorAll('[id^="item-desc-"]').forEach(el=>{
+    const id=el.id.replace('item-desc-','');
+    const qty=parseFloat(g('item-qty-'+id)?.value)||1;
+    const cost=parseFloat(g('item-cost-'+id)?.value)||0;
+    if(el.value.trim()||cost) items.push({desc:el.value.trim(),qty,cost});
+  });
+  const sales=[];
+  document.querySelectorAll('[id^="sale-desc-"]').forEach(el=>{
+    const id=el.id.replace('sale-desc-','');
+    const qty=parseFloat(g('sale-qty-'+id)?.value)||1;
+    const price=parseFloat(g('sale-price-'+id)?.value)||0;
+    if(el.value.trim()||price) sales.push({desc:el.value.trim(),qty,price});
+  });
+  const shipping=parseFloat(g('f-shipping').value)||0;
+  const customs=parseFloat(g('f-customs').value)||0;
+  const moneygram=parseFloat(g('f-moneygram').value)||0;
+  const packaging=parseFloat(g('f-packaging').value)||0;
+  const domestic=parseFloat(g('f-domestic').value)||0;
+  const fulfillOther=parseFloat(g('f-fulfill-other').value)||0;
+  const itemCost=items.reduce((s,i)=>s+i.qty*i.cost,0);
+  const importCost=shipping+customs+moneygram;
+  const fulfillCost=packaging+domestic+fulfillOther;
+  const totalCost=itemCost+importCost+fulfillCost;
+  const revenue=sales.reduce((s,i)=>s+i.qty*i.price,0);
+  const pmFee=sales.reduce((s,i)=>{ const u=i.price/i.qty; return s+(u<=15?0.08*i.price:0.20*i.price); },0);
+  const netRevenue=revenue-pmFee;
+  const profit=netRevenue-totalCost;
+  shipments.unshift({id:Date.now(),name,date,items,sales,shipping,customs,moneygram,packaging,domestic,fulfillOther,itemCost,importCost,fulfillCost,totalCost,revenue,pmFee,netRevenue,profit});
+  save();
+  switchTab('shipments');
+}
+
+/* ---- FULFILLMENT ---- */
+function populateFulfillmentShipments(){
+  const sel=g('fe-shipment'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— not linked —</option>';
+  shipments.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sel.appendChild(o); });
+  sel.value=cur;
+}
+
+function saveFulfillment(){
+  const date=g('fe-date').value||new Date().toISOString().split('T')[0];
+  const cat=g('fe-cat').value;
+  const desc=g('fe-desc').value.trim();
+  const amount=parseFloat(g('fe-amount').value)||0;
+  const linkedId=g('fe-shipment').value;
+  const linkedName=linkedId?shipments.find(s=>s.id==linkedId)?.name||'':'';
+  if(!amount){ alert('Please enter an amount.'); return; }
+  fulfillments.unshift({id:Date.now(),date,cat,desc,amount,linkedId,linkedName});
+  saveFul();
+  g('fe-desc').value=''; g('fe-amount').value='';
+  renderFulfillmentTab();
+}
+
+function deleteFulfillment(idx){ if(confirm('Remove this expense?')){ fulfillments.splice(idx,1); saveFul(); renderFulfillmentTab(); } }
+
+const catLabels={packaging:'Packaging',domestic_ship:'Domestic shipping',labels:'Shipping labels',supplies:'Packing supplies',other:'Other'};
+const catColors={packaging:'badge-blue',domestic_ship:'badge-purple',labels:'badge-amber',supplies:'badge-green',other:'badge-gray'};
+
+function renderFulfillmentTab(){
+  const totals={packaging:0,domestic_ship:0,labels:0,supplies:0,other:0};
+  fulfillments.forEach(f=>{ if(totals[f.cat]!==undefined) totals[f.cat]+=f.amount; else totals.other+=f.amount; });
+  const grand=Object.values(totals).reduce((a,b)=>a+b,0);
+  g('fulfillment-summary').innerHTML=`
+    <div class="metric"><div class="metric-label">Packaging</div><div class="metric-value amber">${fmt(totals.packaging)}</div></div>
+    <div class="metric"><div class="metric-label">Domestic shipping</div><div class="metric-value amber">${fmt(totals.domestic_ship)}</div></div>
+    <div class="metric"><div class="metric-label">Labels & postage</div><div class="metric-value amber">${fmt(totals.labels)}</div></div>
+    <div class="metric"><div class="metric-label">Supplies</div><div class="metric-value amber">${fmt(totals.supplies)}</div></div>
+    <div class="metric"><div class="metric-label">Total fulfillment</div><div class="metric-value red">${fmt(grand)}</div></div>`;
+  const tbody=g('fulfillment-table'), empty=g('fulfillment-empty');
+  if(!fulfillments.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  tbody.innerHTML=fulfillments.map((f,idx)=>`<tr>
+    <td>${f.date}</td>
+    <td><span class="badge ${catColors[f.cat]||'badge-gray'}">${catLabels[f.cat]||f.cat}</span></td>
+    <td>${f.desc||'—'}</td>
+    <td style="color:#888">${f.linkedName||'—'}</td>
+    <td style="font-weight:500">${fmt(f.amount)}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteFulfillment(${idx})">✕</button></td>
+  </tr>`).join('');
+}
+
+/* ---- CSV IMPORT ---- */
+function populateCSVShipmentSelect(){
+  const sel=g('csv-link-shipment'); if(!sel) return;
+  sel.innerHTML='<option value="">— not linked to a shipment —</option>';
+  shipments.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sel.appendChild(o); });
+}
+
+// Drag and drop
+const dropZone=g('csv-drop');
+dropZone.addEventListener('dragover',e=>{ e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop',e=>{ e.preventDefault(); dropZone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) readCSVFile(f); });
+
+function handleCSVFile(event){ const f=event.target.files[0]; if(f) readCSVFile(f); }
+function readCSVFile(file){
+  const reader=new FileReader();
+  reader.onload=e=>{ parseAndPreviewCSV(e.target.result); };
+  reader.readAsText(file);
+}
+function parseCSVText(){ parseAndPreviewCSV(g('csv-paste').value); }
+
+function parseAndPreviewCSV(text){
+  if(!text.trim()){ alert('No CSV content found.'); return; }
+  const lines=text.trim().split(/\r?\n/);
+  if(lines.length<2){ alert('CSV must have a header row and at least one data row.'); return; }
+
+  const headers=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim().toLowerCase());
+  const rows=[];
+  const warnings=[];
+
+  // Try to find relevant columns flexibly
+  const findCol=(arr,candidates)=>{ for(const c of candidates){ const i=arr.indexOf(c); if(i>=0) return i; } return -1; };
+  const titleIdx=findCol(headers,['title','listing title','item title','item','description','item name']);
+  const priceIdx=findCol(headers,['earnings','net earnings','amount','sale price','sale amount','order total','price','net']);
+  const grossIdx=findCol(headers,['sale price','gross','order total','amount','price']);
+  const dateIdx=findCol(headers,['date','order date','sold date','sale date','created at','date sold']);
+  const orderIdx=findCol(headers,['order id','order #','order number','id']);
+
+  if(priceIdx<0 && grossIdx<0){
+    warnings.push('Could not find a price/earnings column. Make sure this is a Poshmark CSV export. Columns found: '+headers.join(', '));
+  }
+
+  for(let i=1;i<lines.length;i++){
+    if(!lines[i].trim()) continue;
+    // Handle quoted fields
+    const cols=lines[i].match(/(".*?"|[^,]+|(?<=,)(?=,)|^(?=,))/g)||lines[i].split(',');
+    const clean=cols.map(c=>(c||'').replace(/^"|"$/g,'').trim());
+
+    const title=titleIdx>=0?clean[titleIdx]||'Poshmark sale':'Poshmark sale';
+    let price=0;
+    if(priceIdx>=0) price=parseFloat((clean[priceIdx]||'0').replace(/[$,]/g,''))||0;
+    else if(grossIdx>=0) price=parseFloat((clean[grossIdx]||'0').replace(/[$,]/g,''))||0;
+    const date=dateIdx>=0?(clean[dateIdx]||new Date().toISOString().split('T')[0]):new Date().toISOString().split('T')[0];
+    const orderId=orderIdx>=0?clean[orderIdx]:'';
+
+    if(price>0) rows.push({title,price,date,orderId});
+  }
+
+  if(rows.length===0){
+    alert('No valid sales rows found. Please check your CSV format.');
+    return;
+  }
+
+  csvParsed=rows;
+  renderCSVPreview(rows, warnings);
+}
+
+function renderCSVPreview(rows, warnings=[]){
+  g('csv-preview-section').style.display='block';
+  const warnEl=g('csv-warning');
+  if(warnings.length){ warnEl.style.display='block'; warnEl.innerHTML='<strong>Note:</strong> '+warnings.join('<br>'); }
+  else { warnEl.style.display='none'; }
+
+  const totalRevenue=rows.reduce((s,r)=>s+r.price,0);
+  const totalFees=rows.reduce((s,r)=>s+(r.price<=15?r.price*0.08:r.price*0.20),0);
+
+  g('csv-preview-table').innerHTML=`
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:1rem">
+      <div class="metric" style="flex:1;min-width:120px"><div class="metric-label">Rows found</div><div class="metric-value">${rows.length}</div></div>
+      <div class="metric" style="flex:1;min-width:120px"><div class="metric-label">Total revenue</div><div class="metric-value green">${fmt(totalRevenue)}</div></div>
+      <div class="metric" style="flex:1;min-width:120px"><div class="metric-label">Est. Poshmark fees</div><div class="metric-value amber">${fmt(totalFees)}</div></div>
+      <div class="metric" style="flex:1;min-width:120px"><div class="metric-label">Est. net to you</div><div class="metric-value green">${fmt(totalRevenue-totalFees)}</div></div>
+    </div>
+    <table><thead><tr><th>#</th><th>Date</th><th>Item title</th><th>Sale price</th><th>Est. PM fee</th><th>Net to you</th></tr></thead>
+    <tbody>${rows.map((r,i)=>{
+      const fee=r.price<=15?r.price*0.08:r.price*0.20;
+      return`<tr><td style="color:#aaa">${i+1}</td><td>${r.date}</td><td>${r.title}</td><td>${fmt(r.price)}</td><td style="color:#BA7517">${fmt(fee)}</td><td style="color:#1D9E75">${fmt(r.price-fee)}</td></tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+function importCSVSales(){
+  if(!csvParsed.length){ alert('Nothing to import.'); return; }
+  const linkedId=g('csv-link-shipment').value;
+  const linkedName=linkedId?shipments.find(s=>s.id==linkedId)?.name||'':'';
+  let imported=0;
+  csvParsed.forEach(r=>{
+    const fee=r.price<=15?r.price*0.08:r.price*0.20;
+    salesLog.unshift({id:Date.now()+Math.random(),date:r.date,title:r.title,price:r.price,pmFee:parseFloat(fee.toFixed(2)),net:parseFloat((r.price-fee).toFixed(2)),linkedId,linkedName,orderId:r.orderId||''});
+    imported++;
+  });
+  saveSales();
+  csvParsed=[];
+  g('csv-preview-section').style.display='none';
+  g('csv-paste').value='';
+  g('csv-file-input').value='';
+  renderSalesLog();
+  alert(`${imported} sales imported successfully!`);
+}
+
+function clearCSVPreview(){ csvParsed=[]; g('csv-preview-section').style.display='none'; g('csv-paste').value=''; g('csv-file-input').value=''; }
+
+function deleteSale(idx){ if(confirm('Remove this sale?')){ salesLog.splice(idx,1); saveSales(); renderSalesLog(); } }
+
+function renderSalesLog(){
+  const totalRev=salesLog.reduce((s,r)=>s+r.price,0);
+  const totalFees=salesLog.reduce((s,r)=>s+r.pmFee,0);
+  const totalNet=salesLog.reduce((s,r)=>s+r.net,0);
+  g('sales-summary-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Total sales</div><div class="metric-value">${salesLog.length}</div></div>
+    <div class="metric"><div class="metric-label">Gross revenue</div><div class="metric-value green">${fmt(totalRev)}</div></div>
+    <div class="metric"><div class="metric-label">Poshmark fees paid</div><div class="metric-value amber">${fmt(totalFees)}</div></div>
+    <div class="metric"><div class="metric-label">Net earnings</div><div class="metric-value green">${fmt(totalNet)}</div></div>`;
+  const tbody=g('sales-log-table'), empty=g('sales-log-empty');
+  if(!salesLog.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  tbody.innerHTML=salesLog.map((s,idx)=>`<tr>
+    <td>${s.date}</td>
+    <td>${s.title}</td>
+    <td style="font-weight:500">${fmt(s.price)}</td>
+    <td style="color:#BA7517">${fmt(s.pmFee)}</td>
+    <td style="color:#1D9E75;font-weight:500">${fmt(s.net)}</td>
+    <td style="color:#888">${s.linkedName||'—'}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteSale(${idx})">✕</button></td>
+  </tr>`).join('');
+}
+
+/* ---- DASHBOARD ---- */
+function calcMetrics(){
+  const totalRevenue=shipments.reduce((s,sh)=>s+sh.revenue,0)+salesLog.reduce((s,r)=>s+r.price,0);
+  const totalItemCost=shipments.reduce((s,sh)=>s+sh.itemCost,0);
+  const totalImport=shipments.reduce((s,sh)=>s+(sh.importCost||sh.shipping+sh.customs+sh.moneygram),0);
+  const totalFulfill=shipments.reduce((s,sh)=>s+(sh.fulfillCost||(sh.packaging||0)+(sh.domestic||0)+(sh.fulfillOther||0)),0)+fulfillments.reduce((s,f)=>s+f.amount,0);
+  const totalPm=shipments.reduce((s,sh)=>s+sh.pmFee,0)+salesLog.reduce((s,r)=>s+r.pmFee,0);
+  const totalCost=totalItemCost+totalImport+totalFulfill+totalPm;
+  const netRevenue=totalRevenue-totalPm;
+  const totalProfit=netRevenue-totalItemCost-totalImport-totalFulfill;
+  const margin=totalRevenue>0?totalProfit/totalRevenue*100:0;
+  return{totalRevenue,totalItemCost,totalImport,totalFulfill,totalCost,totalProfit,totalPm,margin};
+}
+
+function renderMetrics(){
+  const m=calcMetrics();
+  g('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Total revenue</div><div class="metric-value">${fmt(m.totalRevenue)}</div></div>
+    <div class="metric"><div class="metric-label">Item cost (COGS)</div><div class="metric-value red">${fmt(m.totalItemCost)}</div></div>
+    <div class="metric"><div class="metric-label">Import costs</div><div class="metric-value red">${fmt(m.totalImport)}</div></div>
+    <div class="metric"><div class="metric-label">Fulfillment costs</div><div class="metric-value amber">${fmt(m.totalFulfill)}</div></div>
+    <div class="metric"><div class="metric-label">Poshmark fees</div><div class="metric-value amber">${fmt(m.totalPm)}</div></div>
+    <div class="metric"><div class="metric-label">Net profit</div><div class="metric-value ${m.totalProfit>=0?'green':'red'}">${fmtS(m.totalProfit)}</div></div>
+    <div class="metric"><div class="metric-label">Avg margin</div><div class="metric-value ${m.margin>=20?'green':m.margin>=0?'amber':'red'}">${m.margin.toFixed(1)}%</div></div>`;
+}
+
+function renderCharts(){
+  const recent=shipments.slice(0,7).reverse();
+  const labels=recent.map(s=>s.name.length>10?s.name.slice(0,10)+'…':s.name);
+  if(profitChart) profitChart.destroy();
+  profitChart=new Chart(g('profitChart'),{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'Revenue',data:recent.map(s=>parseFloat(s.revenue.toFixed(2))),backgroundColor:'#5DCAA5'},
+      {label:'Profit',data:recent.map(s=>parseFloat(s.profit.toFixed(2))),backgroundColor:recent.map(s=>s.profit>=0?'#1D9E75':'#D85A30')}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{callback:v=>'$'+v.toLocaleString()}}}}
+  });
+  if(costChart) costChart.destroy();
+  const m=calcMetrics();
+  costChart=new Chart(g('costChart'),{
+    type:'doughnut',
+    data:{labels:['Item cost','Intl shipping','Customs','MoneyGram','Packaging','Dom. shipping','Poshmark fee'],
+      datasets:[{data:[
+        m.totalItemCost,
+        shipments.reduce((s,sh)=>s+sh.shipping,0),
+        shipments.reduce((s,sh)=>s+sh.customs,0),
+        shipments.reduce((s,sh)=>s+sh.moneygram,0),
+        shipments.reduce((s,sh)=>s+(sh.packaging||0),0)+fulfillments.filter(f=>f.cat==='packaging').reduce((s,f)=>s+f.amount,0),
+        shipments.reduce((s,sh)=>s+(sh.domestic||0),0)+fulfillments.filter(f=>f.cat==='domestic_ship').reduce((s,f)=>s+f.amount,0),
+        m.totalPm
+      ].map(v=>parseFloat(v.toFixed(2))),backgroundColor:['#5DCAA5','#378ADD','#EF9F27','#D4537E','#7F77DD','#85B7EB','#D85A30']}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}}}}
+  });
+}
+
+function renderRecentTable(){
+  const el=g('recent-table');
+  if(!shipments.length){ el.innerHTML='<div class="empty-state">No shipments yet. Add your first one!</div>'; return; }
+  el.innerHTML=`<table><thead><tr><th>Shipment</th><th>Cost</th><th>Fulfillment</th><th>Revenue</th><th>Profit</th></tr></thead><tbody>${
+    shipments.slice(0,5).map(s=>{
+      const fc=(s.fulfillCost||(s.packaging||0)+(s.domestic||0)+(s.fulfillOther||0));
+      const pct=s.revenue>0?Math.min(Math.abs(s.profit/s.revenue*100),100):0;
+      const col=s.profit>=0?'#1D9E75':s.profit>-50?'#BA7517':'#D85A30';
+      return`<tr><td><strong>${s.name}</strong><br><span style="font-size:11px;color:#aaa">${s.date}</span></td><td>${fmt(s.totalCost-fc)}</td><td>${fmt(fc)}</td><td>${fmt(s.revenue)}</td><td style="color:${col}">${fmtS(s.profit)}<div class="profit-bar"><div class="profit-fill" style="width:${pct}%;background:${col}"></div></div></td></tr>`;
+    }).join('')
+  }</tbody></table>`;
+}
+
+function renderDashboard(){ renderMetrics(); if(shipments.length) renderCharts(); renderRecentTable(); }
+
+/* ---- SHIPMENTS LIST ---- */
+function renderShipments(){
+  const tbody=g('shipments-table'), empty=g('shipments-empty');
+  if(!shipments.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  tbody.innerHTML=shipments.map((s,idx)=>{
+    const fc=(s.fulfillCost||(s.packaging||0)+(s.domestic||0)+(s.fulfillOther||0));
+    const margin=s.revenue>0?(s.profit/s.revenue*100):0;
+    const sc=s.profit>0?'badge-green':s.profit===0?'badge-blue':'badge-red';
+    return`<tr>
+      <td><strong>${s.name}</strong></td><td>${s.date}</td>
+      <td>${fmt(s.itemCost)}</td><td>${fmt(s.importCost||s.shipping+s.customs+s.moneygram)}</td>
+      <td>${fmt(fc)}</td><td>${fmt(s.totalCost)}</td><td>${fmt(s.revenue)}</td>
+      <td style="color:${s.profit>=0?'#1D9E75':'#D85A30'};font-weight:500">${fmtS(s.profit)}</td>
+      <td>${margin.toFixed(1)}%</td>
+      <td><span class="badge ${sc}">${s.profit>0?'Profitable':s.profit===0?'Break-even':'Loss'}</span></td>
+      <td style="display:flex;gap:5px">
+        <button class="btn btn-sm" onclick="viewShipment(${idx})">View</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteShipment(${idx})">✕</button>
+      </td></tr>`;
+  }).join('');
+}
+
+function deleteShipment(idx){ if(confirm('Delete this shipment?')){ shipments.splice(idx,1); save(); renderShipments(); } }
+
+function viewShipment(idx){
+  const s=shipments[idx];
+  const fc=(s.fulfillCost||(s.packaging||0)+(s.domestic||0)+(s.fulfillOther||0));
+  const iR=s.items.map(i=>`<tr><td>${i.desc}</td><td>${i.qty}</td><td>${fmt(i.cost)}</td><td>${fmt(i.qty*i.cost)}</td></tr>`).join('');
+  const sR=s.sales.map(i=>`<tr><td>${i.desc}</td><td>${i.qty}</td><td>${fmt(i.price)}</td><td>${fmt(i.qty*i.price)}</td></tr>`).join('');
+  const w=window.open('','_blank','width=640,height:800');
+  if(w){ w.document.write(`<html><head><title>${s.name}</title><style>body{font-family:sans-serif;padding:2rem;color:#222;max-width:600px}h2{margin-bottom:4px}h3{margin:1.5rem 0 6px;font-size:13px;color:#666;text-transform:uppercase;letter-spacing:.05em}table{width:100%;border-collapse:collapse;margin-bottom:1rem}th,td{padding:7px 10px;border:1px solid #e5e5e5;text-align:left;font-size:13px}th{background:#f8f8f8}.total-row{font-weight:700;background:#f2f2f2}.green{color:#1D9E75}.red{color:#D85A30}</style></head><body>
+    <h2>${s.name}</h2><p style="color:#999;font-size:12px">Date: ${s.date}</p>
+    <h3>Items purchased (Cambodia suppliers)</h3>
+    <table><tr><th>Description</th><th>Qty</th><th>Unit cost</th><th>Total</th></tr>${iR}<tr class="total-row"><td colspan="3">Item cost subtotal</td><td>${fmt(s.itemCost)}</td></tr></table>
+    <h3>Import costs</h3>
+    <table><tr><td>International shipping</td><td>${fmt(s.shipping)}</td></tr><tr><td>US Customs / import tax</td><td>${fmt(s.customs)}</td></tr><tr><td>MoneyGram fee</td><td>${fmt(s.moneygram)}</td></tr><tr class="total-row"><td>Import subtotal</td><td>${fmt(s.shipping+s.customs+s.moneygram)}</td></tr></table>
+    <h3>Fulfillment costs (packaging + domestic shipping)</h3>
+    <table><tr><td>Packaging materials</td><td>${fmt(s.packaging||0)}</td></tr><tr><td>Domestic shipping to buyers</td><td>${fmt(s.domestic||0)}</td></tr><tr><td>Other fulfillment</td><td>${fmt(s.fulfillOther||0)}</td></tr><tr class="total-row"><td>Fulfillment subtotal</td><td>${fmt(fc)}</td></tr></table>
+    <h3>Poshmark sales</h3>
+    <table><tr><th>Item</th><th>Qty</th><th>Sale price</th><th>Total</th></tr>${sR||'<tr><td colspan=4>No sales recorded</td></tr>'}</table>
+    <h3>Profit summary</h3>
+    <table><tr><td>Gross revenue</td><td>${fmt(s.revenue)}</td></tr><tr><td>Poshmark fees (20%)</td><td class="red">-${fmt(s.pmFee)}</td></tr><tr><td>Net revenue</td><td>${fmt(s.netRevenue)}</td></tr><tr><td>Item cost (COGS)</td><td class="red">-${fmt(s.itemCost)}</td></tr><tr><td>Import costs</td><td class="red">-${fmt(s.shipping+s.customs+s.moneygram)}</td></tr><tr><td>Fulfillment costs</td><td class="red">-${fmt(fc)}</td></tr><tr class="total-row"><td>Net profit</td><td class="${s.profit>=0?'green':'red'}">${fmtS(s.profit)}</td></tr></table>
+    </body></html>`); w.document.close(); }
+}
+
+/* ---- TAX ---- */
+function renderTax(){
+  const status=g('filing-status')?.value||'single';
+  const otherInc=parseFloat(g('other-income')?.value)||0;
+  const stateRate=parseFloat(g('state-sel')?.value)||0;
+  const sfTotal=fulfillments.reduce((s,f)=>s+f.amount,0);
+  const csvNetRevenue=salesLog.reduce((s,r)=>s+r.net,0);
+  const shipmentProfit=shipments.reduce((s,sh)=>s+sh.profit,0);
+  const netBiz=shipmentProfit+csvNetRevenue-sfTotal;
+  const totalGross=netBiz+otherInc;
+  const std={single:14600,mfj:29200,hoh:21900}[status]||14600;
+  const taxable=Math.max(0,totalGross-std);
+  const seBase=Math.max(0,netBiz)*0.9235;
+  const seTax=seBase*0.153;
+  const seDed=seTax*0.5;
+  const adjTaxable=Math.max(0,taxable-seDed);
+  const bkts={single:[[11925,.10],[48475,.12],[103350,.22],[197300,.24],[250525,.32],[626350,.35],[Infinity,.37]],mfj:[[23850,.10],[96950,.12],[206700,.22],[394600,.24],[501050,.32],[751600,.35],[Infinity,.37]],hoh:[[17000,.10],[64850,.12],[103350,.22],[197300,.24],[250500,.32],[626350,.35],[Infinity,.37]]}[status];
+  let fedTax=0,prev=0;
+  for(const[lim,rate]of bkts){ if(adjTaxable<=prev) break; fedTax+=(Math.min(adjTaxable,lim)-prev)*rate; prev=lim; }
+  const stateTax=adjTaxable*stateRate;
+  const total=seTax+fedTax+stateTax;
+  const quarterly=total/4;
+  const effRate=totalGross>0?total/totalGross*100:0;
+  const fulfillTotal=shipments.reduce((s,sh)=>s+(sh.fulfillCost||(sh.packaging||0)+(sh.domestic||0)+(sh.fulfillOther||0)),0)+sfTotal;
+
+  g('tax-output').innerHTML=`
+  <div class="card">
+    <div class="section-title">Income summary</div>
+    <div class="metric-grid">
+      <div class="metric"><div class="metric-label">Net business income</div><div class="metric-value ${netBiz>=0?'green':'red'}">${fmtS(netBiz)}</div></div>
+      <div class="metric"><div class="metric-label">Gross income (incl. other)</div><div class="metric-value">${fmt(totalGross)}</div></div>
+      <div class="metric"><div class="metric-label">Standard deduction</div><div class="metric-value">${fmt(std)}</div></div>
+      <div class="metric"><div class="metric-label">Taxable income (est.)</div><div class="metric-value">${fmt(adjTaxable)}</div></div>
+    </div>
+  </div>
+  <div class="tax-box">
+    <div class="tax-box-title">Estimated taxes — set these aside</div>
+    <div class="tax-row"><span>Self-employment tax (SE tax — 15.3%)</span><span style="color:#633806">${fmt(seTax)}</span></div>
+    <div class="tax-row"><span>Federal income tax</span><span style="color:#633806">${fmt(fedTax)}</span></div>
+    <div class="tax-row"><span>State income tax</span><span style="color:#633806">${fmt(stateTax)}</span></div>
+    <div class="tax-row"><span>Total estimated tax</span><span style="color:#D85A30;font-size:18px;font-weight:700">${fmt(total)}</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem">
+      <div class="metric"><div class="metric-label">Quarterly payment (est.)</div><div class="metric-value amber">${fmt(quarterly)}</div></div>
+      <div class="metric"><div class="metric-label">Effective tax rate</div><div class="metric-value amber">${effRate.toFixed(1)}%</div></div>
+    </div>
+    <div style="font-size:11px;color:#854F0B;margin-top:10px;line-height:1.7">Estimated only — not tax advice. 2025 brackets & standard deductions used. SE tax = 15.3% on 92.35% of net SE income; half deducted before income tax. Quarterly due: Apr 15, Jun 16, Sep 15, Jan 15. Consult a CPA at filing.</div>
+  </div>
+  <div class="card" style="margin-top:1rem">
+    <div class="section-title">Deductible business expenses — Schedule C</div>
+    <table>
+      <thead><tr><th>Expense</th><th>Total this year</th><th>Schedule C line</th><th>Deductible?</th></tr></thead>
+      <tbody>
+        <tr><td>Merchandise / COGS (Cambodia suppliers)</td><td>${fmt(shipments.reduce((s,sh)=>s+sh.itemCost,0))}</td><td>Line 36 — COGS</td><td><span class="badge badge-green">Yes</span></td></tr>
+        <tr><td>International shipping (Cambodia → US)</td><td>${fmt(shipments.reduce((s,sh)=>s+sh.shipping,0))}</td><td>Line 22 — Freight</td><td><span class="badge badge-green">Yes</span></td></tr>
+        <tr><td>US Customs / import duties</td><td>${fmt(shipments.reduce((s,sh)=>s+sh.customs,0))}</td><td>Line 23 — Taxes & licenses</td><td><span class="badge badge-green">Yes</span></td></tr>
+        <tr><td>MoneyGram transfer fees</td><td>${fmt(shipments.reduce((s,sh)=>s+sh.moneygram,0))}</td><td>Line 17 — Other expenses</td><td><span class="badge badge-green">Yes</span></td></tr>
+        <tr style="background:#f9f9f7"><td><strong>Packaging materials</strong></td><td><strong>${fmt(shipments.reduce((s,sh)=>s+(sh.packaging||0),0)+fulfillments.filter(f=>f.cat==='packaging').reduce((s,f)=>s+f.amount,0))}</strong></td><td>Line 22 — Supplies</td><td><span class="badge badge-green">Yes</span></td></tr>
+        <tr style="background:#f9f9f7"><td><strong>Domestic shipping to buyers</strong></td><td><strong>${fmt(shipments.reduce((s,sh)=>s+(sh.domestic||0),0)+fulfillments.filter(f=>f.cat==='domestic_ship').reduce((s,f)=>s+f.amount,0))}</strong></td><td>Line 22 — Freight</td><td><span class="badge badge-green">Yes</span></td></tr>
+        <tr style="background:#f9f9f7"><td><strong>Shipping labels / postage</strong></td><td><strong>${fmt(fulfillments.filter(f=>f.cat==='labels').reduce((s,f)=>s+f.amount,0))}</strong></td><td>Line 22 — Freight</td><td><span class="badge badge-green">Yes</span></td></tr>
+        <tr style="background:#f9f9f7"><td><strong>Packing supplies (tissue, etc.)</strong></td><td><strong>${fmt(fulfillments.filter(f=>f.cat==='supplies').reduce((s,f)=>s+f.amount,0))}</strong></td><td>Line 22 — Supplies</td><td><span class="badge badge-green">Yes</span></td></tr>
+        <tr><td>Poshmark platform fees</td><td>${fmt(shipments.reduce((s,sh)=>s+sh.pmFee,0)+salesLog.reduce((s,r)=>s+r.pmFee,0))}</td><td>Line 10 — Commissions</td><td><span class="badge badge-green">Yes</span></td></tr>
+      </tbody>
+    </table>
+  </div>`;
+}
+
+/* ---- INIT ---- */
+if(!shipments.length){
+  shipments=[
+    {id:1,name:'March 2025 Batch',date:'2025-03-15',items:[{desc:'Silk blouses',qty:20,cost:12},{desc:'Linen pants',qty:15,cost:18}],sales:[{desc:'Silk blouse navy',qty:5,price:48},{desc:'Linen pants cream',qty:3,price:55}],shipping:85,customs:42,moneygram:12,packaging:18,domestic:22,fulfillOther:0,itemCost:510,importCost:139,fulfillCost:40,totalCost:689,revenue:405,pmFee:81,netRevenue:324,profit:-365},
+    {id:2,name:'April 2025 Batch',date:'2025-04-20',items:[{desc:'Cotton dresses',qty:25,cost:15},{desc:'Scarves',qty:30,cost:6}],sales:[{desc:'Cotton dress blue',qty:10,price:62},{desc:'Scarf set',qty:12,price:28}],shipping:95,customs:55,moneygram:14,packaging:24,domestic:35,fulfillOther:5,itemCost:555,importCost:164,fulfillCost:64,totalCost:783,revenue:956,pmFee:191,netRevenue:765,profit:-18}
+  ];
+  save();
+}
+g('fe-date').value=new Date().toISOString().split('T')[0];
+renderDashboard();
+</script>
+</body>
+</html>

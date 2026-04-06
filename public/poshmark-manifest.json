@@ -1,0 +1,14 @@
+{
+  "name": "Poshmark Business Tracker",
+  "short_name": "Poshmark",
+  "description": "Track Poshmark sales, shipments, costs, and profit",
+  "start_url": "/poshmark",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a1a1a",
+  "background_color": "#f5f5f0",
+  "icons": [
+    { "src": "/poshmark-icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "categories": ["business", "finance"]
+}
