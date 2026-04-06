@@ -201,10 +201,14 @@ tr:hover td{background:#fafafa}
       </div>
       <div class="cost-section">
         <div class="cost-section-label">Import costs</div>
-        <div class="form-grid three">
+        <div class="form-grid" style="grid-template-columns:1fr 1fr">
+          <div class="form-group"><label>MoneyGram amount sent ($)</label><input type="number" id="f-mg-amount" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>MoneyGram fee ($)</label><input type="number" id="f-moneygram" placeholder="0.00" min="0" step="0.01"></div>
+        </div>
+        <div class="form-grid three" style="margin-top:12px">
           <div class="form-group"><label>International shipping ($)</label><input type="number" id="f-shipping" placeholder="0.00" min="0" step="0.01"></div>
           <div class="form-group"><label>US customs / import tax ($)</label><input type="number" id="f-customs" placeholder="0.00" min="0" step="0.01"></div>
-          <div class="form-group"><label>MoneyGram fee ($)</label><input type="number" id="f-moneygram" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Exchange rate (KHR per $1)</label><input type="number" id="f-exchange-rate" placeholder="4100" min="0" step="1"></div>
         </div>
       </div>
       <div class="cost-section">
@@ -396,21 +400,23 @@ function saveShipment(){
     const price=parseFloat(g('sale-price-'+id)?.value)||0;
     if(el.value.trim()||price) sales.push({desc:el.value.trim(),qty,price});
   });
+  const mgAmount=parseFloat(g('f-mg-amount')?.value)||0;
+  const moneygram=parseFloat(g('f-moneygram').value)||0;
+  const exchangeRate=parseFloat(g('f-exchange-rate')?.value)||4100;
   const shipping=parseFloat(g('f-shipping').value)||0;
   const customs=parseFloat(g('f-customs').value)||0;
-  const moneygram=parseFloat(g('f-moneygram').value)||0;
   const packaging=parseFloat(g('f-packaging').value)||0;
   const domestic=parseFloat(g('f-domestic').value)||0;
   const fulfillOther=parseFloat(g('f-fulfill-other').value)||0;
   const itemCost=items.reduce((s,i)=>s+i.qty*i.cost,0);
-  const importCost=shipping+customs+moneygram;
+  const importCost=shipping+customs+moneygram+mgAmount;
   const fulfillCost=packaging+domestic+fulfillOther;
   const totalCost=itemCost+importCost+fulfillCost;
   const revenue=sales.reduce((s,i)=>s+i.qty*i.price,0);
   const pmFee=sales.reduce((s,i)=>{ const u=i.price/i.qty; return s+(u<=15?0.08*i.price:0.20*i.price); },0);
   const netRevenue=revenue-pmFee;
   const profit=netRevenue-totalCost;
-  shipments.unshift({id:Date.now(),name,date,items,sales,shipping,customs,moneygram,packaging,domestic,fulfillOther,itemCost,importCost,fulfillCost,totalCost,revenue,pmFee,netRevenue,profit});
+  shipments.unshift({id:Date.now(),name,date,items,sales,mgAmount,moneygram,exchangeRate,shipping,customs,packaging,domestic,fulfillOther,itemCost,importCost,fulfillCost,totalCost,revenue,pmFee,netRevenue,profit});
   save();
   switchTab('shipments');
 }
