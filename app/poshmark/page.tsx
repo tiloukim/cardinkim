@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 
-const PASS = 'kimco2026'
+const PASS = 'Tirak2005'
 const STORAGE_KEY = 'poshmark_auth'
 
 export default function PoshmarkPage() {
